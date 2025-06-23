@@ -34,6 +34,46 @@ function App() {
         setError(null);
       });
 
+      socketService.on('player-ready-changed', (data: any) => {
+        setCurrentRoom(prevRoom => {
+          if (!prevRoom) return prevRoom;
+          
+          const updatedPlayers = prevRoom.players.map(player => 
+            player.id === data.playerId 
+              ? { ...player, isReady: data.isReady }
+              : player
+          );
+          
+          return {
+            ...prevRoom,
+            players: updatedPlayers,
+            status: data.roomStatus
+          };
+        });
+      });
+
+      socketService.on('player-joined', (data: any) => {
+        setCurrentRoom(prevRoom => {
+          if (!prevRoom) return prevRoom;
+          
+          return {
+            ...prevRoom,
+            players: [...prevRoom.players, data.player]
+          };
+        });
+      });
+
+      socketService.on('player-left', (data: any) => {
+        setCurrentRoom(prevRoom => {
+          if (!prevRoom) return prevRoom;
+          
+          return {
+            ...prevRoom,
+            players: prevRoom.players.filter(p => p.id !== data.playerId)
+          };
+        });
+      });
+
       socketService.on('game-started', () => {
         setCurrentView('online-game');
       });
