@@ -39,12 +39,13 @@
 }
 
 .player-header {
-  padding: 16px 8px;
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--color-gray-800);
+  padding: var(--spacing-3) var(--spacing-2);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface);
   text-align: center;
-  border-right: 1px solid var(--color-gray-200);
+  background: var(--color-surface-variant);
+  border-bottom: 1px solid var(--color-gray-700);
   position: relative;
 }
 
@@ -55,6 +56,7 @@
 .player-header.current-player {
   background: var(--color-gray-700);
   color: var(--color-white);
+  border-left: 3px solid var(--color-primary);
 }
 
 .player-header.current-player::after {
@@ -69,25 +71,27 @@
 /* Section Titles */
 .section-title {
   grid-column: 1 / -1;
-  padding: 12px 12px 8px 12px;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--color-gray-600);
+  padding: var(--spacing-3) var(--spacing-4);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  color: var(--color-white);
   text-transform: uppercase;
-  letter-spacing: 0.75px;
-  background: var(--color-gray-25);
-  border-bottom: 1px solid var(--color-gray-200);
+  letter-spacing: 0.05em;
+  background: var(--color-gray-800);
+  border-bottom: 1px solid var(--color-gray-700);
+  border-top: 2px solid var(--color-gray-600);
 }
 
 /* Scorecard Rows */
 .scorecard-row {
   display: grid;
   grid-template-columns: 160px repeat(var(--player-count, 3), 1fr);
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-gray-800);
+  background: var(--color-surface);
 }
 
 .scorecard-row:hover {
-  background: var(--color-gray-25);
+  background: var(--color-gray-800);
 }
 
 .scorecard-row:last-child {
@@ -149,18 +153,18 @@
 }
 
 .score-cell:hover {
-  background: var(--color-gray-50);
+  background: var(--color-gray-800);
 }
 
 .score-cell.scored {
-  background: var(--color-secondary-light);
-  color: var(--color-gray-900);
+  background: var(--color-gray-700);
+  color: var(--color-white);
   cursor: default;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .score-cell.scored:hover {
-  background: var(--color-secondary-light);
+  background: var(--color-gray-700);
 }
 
 .score-cell.available {
@@ -203,15 +207,15 @@
 
 /* Total Cells */
 .total-cell {
-  background: var(--color-gray-100);
-  border-right: 1px solid var(--color-gray-200);
-  padding: 12px 8px;
+  background: var(--color-gray-800);
+  border-bottom: 1px solid var(--color-gray-700);
+  padding: var(--spacing-3) var(--spacing-4);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-gray-800);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
   min-height: 48px;
 }
 
@@ -229,37 +233,38 @@
 
 /* Total Rows */
 .total-row {
-  background: var(--color-gray-50);
+  background: var(--color-gray-800);
 }
 
 .total-row .category-label {
-  background: var(--color-gray-100);
-  font-weight: 600;
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
 }
 
 .grand-total-row {
-  background: var(--color-primary-light);
-  border-top: 2px solid var(--color-primary);
+  background: var(--color-gray-700);
+  border-top: 3px solid var(--color-primary);
 }
 
 .grand-total-row .category-label {
-  background: var(--color-primary);
+  background: var(--color-gray-700);
   color: var(--color-white);
-  font-weight: 700;
+  font-weight: var(--font-weight-bold);
 }
 
 .grand-total-section {
-  border-top: 2px solid var(--color-primary);
+  border-top: 3px solid var(--color-primary);
 }
 
 /* Hint */
 .scorecard-hint {
-  padding: 16px;
+  padding: var(--spacing-4);
   text-align: center;
-  font-size: 13px;
-  color: var(--color-gray-600);
-  background: var(--color-gray-25);
-  border-top: 1px solid var(--color-gray-200);
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface-variant);
+  background: var(--color-surface-variant);
+  border-top: 1px solid var(--color-gray-700);
   font-style: italic;
 }
 
@@ -357,7 +362,4 @@
   }
 }
 
-/* Additional helper color */
-:root {
-  --color-gray-25: #fafafa;
-} 
+/* Remove unnecessary light color */ 
