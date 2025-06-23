@@ -39,7 +39,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
       };
     });
     setPlayerInputs(newInputs);
-  }, [playerCount, playerInputs]);
+  }, [playerCount]); // Remove playerInputs from dependencies to prevent infinite loop
 
   const handlePlayerNameChange = (index: number, name: string) => {
     const newInputs = [...playerInputs];
