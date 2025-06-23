@@ -38,6 +38,7 @@ export interface GameState {
 export type GameAction = 
   | { type: 'START_GAME'; players: Player[] }
   | { type: 'ROLL_DICE' }
+  | { type: 'CLEAR_DICE_ROLLING' }
   | { type: 'TOGGLE_DIE_HOLD'; dieIndex: number }
   | { type: 'SCORE_CATEGORY'; category: ScoreCategory; playerId: string }
   | { type: 'NEXT_TURN' }

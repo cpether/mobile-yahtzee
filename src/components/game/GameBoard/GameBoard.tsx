@@ -92,11 +92,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           ))}
         </div>
         
-        {/* Debug info - temporary */}
-        <div style={{ fontSize: '12px', color: '#666', margin: '8px 0' }}>
-          Debug: Rolls remaining: {gameState.rollsRemaining}, Dice disabled: {gameState.rollsRemaining === 3 ? 'YES' : 'NO'}
-        </div>
-        
         <div className="dice-info">
           <div className="rolls-remaining">
             <span className="rolls-count">{gameState.rollsRemaining}</span>

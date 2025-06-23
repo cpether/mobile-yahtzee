@@ -18,10 +18,7 @@ export const Die: React.FC<DieProps> = ({
   disabled = false,
   animationDelay = 0
 }) => {
-  const [clickCount, setClickCount] = React.useState(0);
-
   const handleClick = () => {
-    setClickCount(prev => prev + 1); // Visual feedback for debugging
     if (!disabled && !isRolling) {
       onToggleHold();
     }
@@ -71,20 +68,6 @@ export const Die: React.FC<DieProps> = ({
           <span className="sr-only">Held</span>
         </div>
       )}
-      {/* Temporary debug info */}
-      <div style={{ 
-        position: 'absolute', 
-        top: '-20px', 
-        left: '0', 
-        fontSize: '10px', 
-        color: disabled ? 'red' : 'green',
-        backgroundColor: 'white',
-        padding: '2px 4px',
-        borderRadius: '2px',
-        border: '1px solid #ccc'
-      }}>
-        Clicks: {clickCount} | {disabled ? 'DIS' : 'EN'}
-      </div>
     </button>
   );
 }; 

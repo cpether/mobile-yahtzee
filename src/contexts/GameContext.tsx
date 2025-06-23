@@ -56,6 +56,13 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       };
     }
     
+    case 'CLEAR_DICE_ROLLING': {
+      return {
+        ...state,
+        dice: state.dice.map(die => ({ ...die, isRolling: false }))
+      };
+    }
+    
     case 'TOGGLE_DIE_HOLD': {
       // Can only hold dice after at least one roll has been made
       if (state.rollsRemaining === 3 || state.gamePhase !== 'playing') {
@@ -116,6 +123,13 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     if (gameState.rollsRemaining > 0) {
       triggerDiceRollHaptic();
       dispatch({ type: 'ROLL_DICE' });
+      
+      // Clear rolling state after animation completes
+      // CSS animation duration is 800ms (200ms for reduced motion)
+      const animationDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 800;
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_DICE_ROLLING' });
+      }, animationDuration + 100); // Add small buffer
     }
   }, [gameState.rollsRemaining]);
   
