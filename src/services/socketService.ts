@@ -280,6 +280,13 @@ class SocketService {
     });
 
     // Game events
+    this.socket.on('dice-rolling-started', (data: any) => {
+      if (this.connectionState.room) {
+        this.connectionState.room.gameState.dice = data.dice;
+      }
+      this.emit('dice-rolling-started', data);
+    });
+
     this.socket.on('dice-rolled', (data: DiceRolledData) => {
       if (this.connectionState.room) {
         this.connectionState.room.gameState.dice = data.dice;
