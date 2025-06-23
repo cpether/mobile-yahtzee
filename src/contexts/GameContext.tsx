@@ -12,7 +12,7 @@ import {
 } from '../utils/gameLogic';
 import { 
   rollUnheldDice, 
-  toggleDieHold, 
+  toggleDieHold as toggleDieHoldUtil, 
   resetDiceHolds, 
   setDiceRolling,
   triggerDiceRollHaptic,
@@ -48,17 +48,6 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     case 'ROLL_DICE': {
       if (state.rollsRemaining <= 0) return state;
       
-      // Set dice to rolling state first (for animation)
-      const rollingState = {
-        ...state,
-        dice: setDiceRolling(state.dice, true)
-      };
-      
-      // After animation, update with actual rolled values
-      setTimeout(() => {
-        // This will be handled by the component's effect
-      }, 100);
-      
       const newDice = rollUnheldDice(state.dice);
       
       return {
@@ -73,7 +62,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       
       return {
         ...state,
-        dice: toggleDieHold(state.dice, action.dieIndex)
+        dice: toggleDieHoldUtil(state.dice, action.dieIndex)
       };
     }
     
