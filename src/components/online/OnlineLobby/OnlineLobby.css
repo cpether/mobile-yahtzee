@@ -40,7 +40,7 @@
 }
 
 .game-code-section {
-  background: white;
+  background: var(--color-background);
   padding: 1.5rem;
   border-radius: 12px;
   border: 2px solid var(--color-border);
@@ -97,7 +97,7 @@
 }
 
 .room-status {
-  background: white;
+  background: var(--color-background);
   padding: 1.5rem;
   border-radius: 12px;
   border: 2px solid var(--color-border);
@@ -157,7 +157,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  background: white;
+  background: var(--color-background);
   padding: 1rem;
   border-radius: 12px;
   border: 2px solid var(--color-border);

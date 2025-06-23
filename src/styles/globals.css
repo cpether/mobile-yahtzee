@@ -15,19 +15,27 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--color-background);
 }
 
 body {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
-  color: var(--color-on-surface);
-  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  margin: 0;
   
   /* Prevent horizontal scroll on mobile */
   overflow-x: hidden;

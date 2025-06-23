@@ -50,7 +50,7 @@
 }
 
 .setup-card {
-  background: white;
+  background: var(--color-background);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -155,8 +155,8 @@
 }
 
 .submit-button.disabled {
-  background: #e0e0e0;
-  color: #999;
+  background: var(--color-gray-200);
+  color: var(--color-gray-500);
   cursor: not-allowed;
 }
 
