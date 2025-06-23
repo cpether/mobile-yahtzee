@@ -29,7 +29,6 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
   // Listen for game state updates from server
   useEffect(() => {
     const handleDiceRollingStarted = (data: any) => {
-      console.log('🎲 Dice rolling started:', data.dice.map((d: any) => `${d.value}(${d.isRolling ? 'rolling' : 'still'})`));
       setGameState(prevState => ({
         ...prevState,
         dice: data.dice
@@ -37,7 +36,6 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
     };
 
     const handleDiceRolled = (data: any) => {
-      console.log('🎲 Dice rolling finished:', data.dice.map((d: any) => `${d.value}(${d.isRolling ? 'rolling' : 'still'})`));
       setGameState(prevState => ({
         ...prevState,
         dice: data.dice,

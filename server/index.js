@@ -418,9 +418,6 @@ io.on('connection', (socket) => {
       die.isHeld ? die : { ...die, isRolling: true }
     );
     
-    console.log('🎲 Server: Emitting dice-rolling-started for room', roomCode);
-    console.log('🎲 Server: Dice state:', room.gameState.dice.map(d => `${d.value}(${d.isRolling ? 'rolling' : 'still'})`));
-    
     // Emit rolling start event
     io.to(roomCode).emit('dice-rolling-started', {
       dice: room.gameState.dice
@@ -433,9 +430,6 @@ io.on('connection', (socket) => {
       );
       room.gameState.rollsRemaining--;
       room.lastActivity = new Date();
-
-      console.log('🎲 Server: Emitting dice-rolled for room', roomCode);
-      console.log('🎲 Server: Final dice state:', room.gameState.dice.map(d => `${d.value}(${d.isRolling ? 'rolling' : 'still'})`));
 
       io.to(roomCode).emit('dice-rolled', {
         dice: room.gameState.dice,
