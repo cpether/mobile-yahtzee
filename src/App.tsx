@@ -57,6 +57,12 @@ function App() {
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
+          // Check if player already exists to prevent duplicates
+          const playerExists = prevRoom.players.some(p => p.id === data.player.id);
+          if (playerExists) {
+            return prevRoom;
+          }
+          
           return {
             ...prevRoom,
             players: [...prevRoom.players, data.player]

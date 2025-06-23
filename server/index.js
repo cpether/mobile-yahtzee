@@ -39,10 +39,96 @@ function createInitialGameState() {
     currentPlayerIndex: 0,
     currentTurn: 1,
     gamePhase: 'setup',
-    dice: Array(5).fill(null).map(() => ({ value: 1, isHeld: false })),
+    dice: Array(5).fill(null).map(() => ({ value: 1, isHeld: false, isRolling: false })),
     rollsRemaining: 3,
     scorecards: {},
     roundNumber: 1
+  };
+}
+
+// Calculate score for a category based on dice values
+function calculateCategoryScore(dice, category) {
+  const values = dice.map(die => die.value);
+  const counts = values.reduce((acc, val) => {
+    acc[val] = (acc[val] || 0) + 1;
+    return acc;
+  }, {});
+  
+  switch (category) {
+    case 'ones':
+    case 'twos':
+    case 'threes':
+    case 'fours':
+    case 'fives':
+    case 'sixes':
+      const targetValue = { ones: 1, twos: 2, threes: 3, fours: 4, fives: 5, sixes: 6 }[category];
+      return (counts[targetValue] || 0) * targetValue;
+    
+    case 'threeOfAKind':
+      const hasThreeOfKind = Object.values(counts).some(count => count >= 3);
+      return hasThreeOfKind ? values.reduce((sum, val) => sum + val, 0) : 0;
+    
+    case 'fourOfAKind':
+      const hasFourOfKind = Object.values(counts).some(count => count >= 4);
+      return hasFourOfKind ? values.reduce((sum, val) => sum + val, 0) : 0;
+    
+    case 'fullHouse':
+      const sortedCounts = Object.values(counts).sort((a, b) => b - a);
+      const isFullHouse = sortedCounts[0] === 3 && sortedCounts[1] === 2;
+      return isFullHouse ? 25 : 0;
+    
+    case 'smallStraight':
+      const sortedValues = [...new Set(values)].sort((a, b) => a - b);
+      const hasSmallStraight = 
+        JSON.stringify(sortedValues).includes('[1,2,3,4]') ||
+        JSON.stringify(sortedValues).includes('[2,3,4,5]') ||
+        JSON.stringify(sortedValues).includes('[3,4,5,6]');
+      return hasSmallStraight ? 30 : 0;
+    
+    case 'largeStraight':
+      const isLargeStraight = 
+        JSON.stringify(values.sort()) === JSON.stringify([1,2,3,4,5]) ||
+        JSON.stringify(values.sort()) === JSON.stringify([2,3,4,5,6]);
+      return isLargeStraight ? 40 : 0;
+    
+    case 'yahtzee':
+      const isYahtzee = Object.values(counts).some(count => count === 5);
+      return isYahtzee ? 50 : 0;
+    
+    case 'chance':
+      return values.reduce((sum, val) => sum + val, 0);
+    
+    default:
+      return 0;
+  }
+}
+
+// Create scorecard structure that matches frontend expectations
+function createGameScorecard(playerId) {
+  return {
+    playerId,
+    scores: {
+      // Upper section
+      ones: null,
+      twos: null,
+      threes: null,
+      fours: null,
+      fives: null,
+      sixes: null,
+      // Lower section
+      threeOfAKind: null,
+      fourOfAKind: null,
+      fullHouse: null,
+      smallStraight: null,
+      largeStraight: null,
+      yahtzee: null,
+      chance: null
+    },
+    upperSectionTotal: 0,
+    upperSectionBonus: 0,
+    lowerSectionTotal: 0,
+    grandTotal: 0,
+    yahtzeeCount: 0
   };
 }
 
@@ -96,6 +182,10 @@ class GameRoom {
     
     this.players.push(player);
     this.gameState.players = this.players;
+    
+    // Add scorecard to gameState for frontend compatibility
+    this.gameState.scorecards[socketId] = createGameScorecard(socketId);
+    
     this.lastActivity = new Date();
     
     return player;
@@ -104,6 +194,9 @@ class GameRoom {
   removePlayer(socketId) {
     this.players = this.players.filter(p => p.socketId !== socketId);
     this.gameState.players = this.players;
+    
+    // Remove scorecard from gameState
+    delete this.gameState.scorecards[socketId];
     
     // If host left, assign new host
     if (socketId === this.hostId && this.players.length > 0) {
@@ -322,7 +415,7 @@ io.on('connection', (socket) => {
 
     // Roll dice that aren't held
     room.gameState.dice = room.gameState.dice.map(die => 
-      die.isHeld ? die : { ...die, value: Math.floor(Math.random() * 6) + 1 }
+      die.isHeld ? die : { ...die, value: Math.floor(Math.random() * 6) + 1, isRolling: false }
     );
     room.gameState.rollsRemaining--;
     room.lastActivity = new Date();
@@ -355,6 +448,82 @@ io.on('connection', (socket) => {
       io.to(roomCode).emit('die-held', {
         dieIndex,
         isHeld: room.gameState.dice[dieIndex].isHeld
+      });
+    }
+  });
+
+  socket.on('select-score', (data) => {
+    const { roomCode, category } = data;
+    const room = rooms.get(roomCode);
+    
+    if (!room || room.status !== 'playing') {
+      socket.emit('game-error', { message: 'Invalid game state' });
+      return;
+    }
+
+    const currentPlayer = room.gameState.players[room.gameState.currentPlayerIndex];
+    if (currentPlayer.socketId !== socket.id) {
+      socket.emit('game-error', { message: 'Not your turn' });
+      return;
+    }
+
+    const scorecard = room.gameState.scorecards[socket.id];
+    if (!scorecard || scorecard.scores[category] !== null) {
+      socket.emit('game-error', { message: 'Invalid category or already scored' });
+      return;
+    }
+
+    // Calculate score for the category
+    const score = calculateCategoryScore(room.gameState.dice, category);
+    scorecard.scores[category] = score;
+    
+    // Update totals (simplified for now)
+    const upperCategories = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+    const lowerCategories = ['threeOfAKind', 'fourOfAKind', 'fullHouse', 'smallStraight', 'largeStraight', 'yahtzee', 'chance'];
+    
+    scorecard.upperSectionTotal = upperCategories.reduce((sum, cat) => sum + (scorecard.scores[cat] || 0), 0);
+    scorecard.lowerSectionTotal = lowerCategories.reduce((sum, cat) => sum + (scorecard.scores[cat] || 0), 0);
+    scorecard.upperSectionBonus = scorecard.upperSectionTotal >= 63 ? 35 : 0;
+    scorecard.grandTotal = scorecard.upperSectionTotal + scorecard.lowerSectionTotal + scorecard.upperSectionBonus;
+    
+    // Move to next turn
+    room.gameState.currentPlayerIndex = (room.gameState.currentPlayerIndex + 1) % room.gameState.players.length;
+    room.gameState.rollsRemaining = 3;
+    room.gameState.dice = room.gameState.dice.map(die => ({ ...die, isHeld: false }));
+    
+    // Update current player
+    room.gameState.players.forEach((player, index) => {
+      player.isCurrentPlayer = index === room.gameState.currentPlayerIndex;
+    });
+    
+    // Check if game is finished (all categories scored for all players)
+    const allCategoriesScored = room.gameState.players.every(player => {
+      const playerScorecard = room.gameState.scorecards[player.id];
+      return Object.values(playerScorecard.scores).every(score => score !== null);
+    });
+    
+    if (allCategoriesScored) {
+      room.gameState.gamePhase = 'finished';
+      room.status = 'finished';
+    }
+    
+    room.lastActivity = new Date();
+    
+    io.to(roomCode).emit('turn-ended', {
+      gameState: room.gameState,
+      scoredCategory: category,
+      score: score,
+      playerId: socket.id
+    });
+    
+    if (allCategoriesScored) {
+      io.to(roomCode).emit('game-ended', {
+        gameState: room.gameState,
+        finalScores: room.gameState.players.map(p => ({
+          playerId: p.id,
+          name: p.name,
+          totalScore: room.gameState.scorecards[p.id].grandTotal
+        }))
       });
     }
   });
