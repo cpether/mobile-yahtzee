@@ -79,17 +79,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
       {/* Dice Area */}
       <div className="game-board__dice">
-                 <div className="dice-container">
-           {gameState.dice.map((die, index) => (
-             <Die
-               key={index}
-               value={die.value}
-               isHeld={die.isHeld}
-               isRolling={die.isRolling}
-               onToggleHold={() => onToggleDieHold(index)}
-               disabled={gameState.rollsRemaining === 3} // Can't hold on first roll
-             />
-           ))}
+        <div className="dice-container">
+          {gameState.dice.map((die, index) => (
+            <Die
+              key={index}
+              value={die.value}
+              isHeld={die.isHeld}
+              isRolling={die.isRolling}
+              onToggleHold={() => onToggleDieHold(index)}
+              disabled={gameState.rollsRemaining === 3} // Can't hold on first roll
+            />
+          ))}
         </div>
         
         <div className="dice-info">

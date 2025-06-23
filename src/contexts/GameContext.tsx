@@ -56,8 +56,18 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       };
     }
     
+    case 'CLEAR_DICE_ROLLING': {
+      return {
+        ...state,
+        dice: state.dice.map(die => ({ ...die, isRolling: false }))
+      };
+    }
+    
     case 'TOGGLE_DIE_HOLD': {
-      if (state.rollsRemaining === 3) return state; // Can't hold before first roll
+      // Can only hold dice after at least one roll has been made
+      if (state.rollsRemaining === 3 || state.gamePhase !== 'playing') {
+        return state;
+      }
       
       return {
         ...state,
@@ -113,15 +123,23 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
     if (gameState.rollsRemaining > 0) {
       triggerDiceRollHaptic();
       dispatch({ type: 'ROLL_DICE' });
+      
+      // Clear rolling state after animation completes
+      // CSS animation duration is 800ms (200ms for reduced motion)
+      const animationDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 800;
+      setTimeout(() => {
+        dispatch({ type: 'CLEAR_DICE_ROLLING' });
+      }, animationDuration + 100); // Add small buffer
     }
   }, [gameState.rollsRemaining]);
   
   const toggleDieHoldAction = useCallback((dieIndex: number) => {
-    if (gameState.rollsRemaining < 3) { // Can only hold after first roll
+    // Only allow holding dice after at least one roll has been made
+    if (gameState.rollsRemaining < 3 && gameState.gamePhase === 'playing') {
       triggerDieHoldHaptic();
       dispatch({ type: 'TOGGLE_DIE_HOLD', dieIndex });
     }
-  }, [gameState.rollsRemaining]);
+  }, [gameState.rollsRemaining, gameState.gamePhase]);
   
   const scoreCategory = useCallback((category: ScoreCategory) => {
     dispatch({ type: 'SCORE_CATEGORY', category, playerId: getCurrentPlayer(gameState)?.id || '' });
