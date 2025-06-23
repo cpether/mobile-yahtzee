@@ -1,0 +1,217 @@
+.game-setup {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-surface);
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+}
+
+.game-setup__header {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.game-setup__title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-2);
+}
+
+.game-setup__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.game-setup__content {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.game-setup__section {
+  margin-bottom: var(--spacing-8);
+}
+
+.game-setup__section-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-4);
+  color: var(--color-on-surface);
+}
+
+/* Player count selector */
+.player-count-selector {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.player-count-button {
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  border: 2px solid var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-white);
+  color: var(--color-on-surface);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.player-count-button:hover {
+  border-color: var(--color-primary);
+}
+
+.player-count-button.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.player-count-button:active {
+  transform: scale(0.95);
+}
+
+/* Player inputs */
+.player-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.player-input {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-3);
+  background-color: var(--color-surface-variant);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  transition: border-color var(--transition-fast);
+}
+
+.player-input:focus-within {
+  border-color: var(--color-primary);
+}
+
+.player-color-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--color-white);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.player-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: var(--font-size-base);
+  color: var(--color-on-surface);
+  padding: var(--spacing-2);
+  min-height: var(--touch-target-min);
+}
+
+.player-name-input::placeholder {
+  color: var(--color-gray-500);
+}
+
+.player-color-select {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface);
+  min-height: var(--touch-target-min);
+  cursor: pointer;
+}
+
+/* Error messages */
+.game-setup__errors {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  margin-bottom: var(--spacing-4);
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: var(--font-size-sm);
+  margin: 0;
+  margin-bottom: var(--spacing-2);
+}
+
+.error-message:last-child {
+  margin-bottom: 0;
+}
+
+/* Actions */
+.game-setup__actions {
+  margin-top: auto;
+  padding-top: var(--spacing-6);
+  text-align: center;
+}
+
+.game-setup__start-button {
+  width: 100%;
+  margin-bottom: var(--spacing-3);
+}
+
+.game-setup__hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .game-setup {
+    padding: var(--spacing-8);
+  }
+  
+  .game-setup__content {
+    max-width: 600px;
+  }
+  
+  .player-count-selector {
+    gap: var(--spacing-4);
+  }
+  
+  .player-count-button {
+    width: var(--touch-target-comfortable);
+    height: var(--touch-target-comfortable);
+  }
+  
+  .player-input {
+    padding: var(--spacing-4);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .game-setup__errors {
+    background-color: #7f1d1d;
+    border-color: #dc2626;
+  }
+  
+  .error-message {
+    color: #fca5a5;
+  }
+  
+  .player-color-select {
+    background-color: var(--color-surface);
+    border-color: var(--color-gray-600);
+  }
+} 

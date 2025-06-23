@@ -14,7 +14,6 @@ import {
   rollUnheldDice, 
   toggleDieHold as toggleDieHoldUtil, 
   resetDiceHolds, 
-  setDiceRolling,
   triggerDiceRollHaptic,
   triggerDieHoldHaptic
 } from '../utils/diceUtils';

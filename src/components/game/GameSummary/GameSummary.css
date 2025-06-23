@@ -1,0 +1,341 @@
+.game-summary {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
+  padding: var(--spacing-4);
+  overflow-y: auto;
+}
+
+.game-summary__header {
+  text-align: center;
+  margin-bottom: var(--spacing-8);
+  color: var(--color-white);
+}
+
+.game-summary__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-6);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.game-summary__winner {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  margin: 0 auto;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.winner-trophy {
+  font-size: 3rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.winner-info {
+  flex: 1;
+  text-align: left;
+}
+
+.winner-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.winner-score {
+  font-size: var(--font-size-lg);
+  color: var(--color-on-surface-variant);
+  font-weight: var(--font-weight-semibold);
+}
+
+.game-summary__results {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.results-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-4);
+  text-align: center;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  padding: var(--spacing-4);
+  background-color: var(--color-surface-variant);
+  border-radius: var(--radius-lg);
+  border: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.result-item--winner {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  border-color: #ffd700;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-md);
+}
+
+.result-rank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.rank-emoji {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--spacing-1);
+}
+
+.rank-text {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+}
+
+.result-item--winner .rank-text {
+  color: var(--color-primary);
+}
+
+.result-player {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.player-color-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--color-white);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex: 1;
+}
+
+.player-name {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-on-surface);
+  margin-bottom: 2px;
+}
+
+.player-achievements {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.achievement {
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  background-color: var(--color-success-light);
+  color: var(--color-success);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.result-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+
+.score-value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.result-item--winner .score-value {
+  color: var(--color-primary);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.score-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-on-surface-variant);
+  font-weight: var(--font-weight-medium);
+}
+
+.game-summary__stats {
+  background-color: var(--color-white);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.stats-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-4);
+  text-align: center;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-4);
+}
+
+.stat-item {
+  text-align: center;
+  padding: var(--spacing-4);
+  background-color: var(--color-surface-variant);
+  border-radius: var(--radius-lg);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: var(--spacing-1);
+}
+
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface-variant);
+  font-weight: var(--font-weight-medium);
+}
+
+.game-summary__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-6);
+}
+
+.game-summary__actions .btn {
+  width: 100%;
+}
+
+.game-summary__congratulations {
+  text-align: center;
+  color: var(--color-white);
+  padding: var(--spacing-4);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
+}
+
+.game-summary__congratulations p {
+  margin: 0 0 var(--spacing-2) 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.game-summary__congratulations p:last-child {
+  margin-bottom: 0;
+}
+
+.thanks-message {
+  opacity: 0.8;
+  font-size: var(--font-size-sm) !important;
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .game-summary {
+    padding: var(--spacing-8);
+  }
+  
+  .game-summary__title {
+    font-size: var(--font-size-4xl);
+  }
+  
+  .game-summary__winner {
+    padding: var(--spacing-8);
+  }
+  
+  .game-summary__results,
+  .game-summary__stats {
+    padding: var(--spacing-8);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .game-summary__actions {
+    flex-direction: row;
+    justify-content: center;
+    max-width: 600px;
+    margin: 0 auto var(--spacing-6) auto;
+  }
+  
+  .game-summary__actions .btn {
+    width: auto;
+    min-width: 200px;
+  }
+  
+  .result-item {
+    padding: var(--spacing-5);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .winner-trophy {
+    animation: none;
+  }
+  
+  .result-item--winner {
+    transform: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .game-summary {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  }
+  
+  .stat-item {
+    background-color: var(--color-gray-800);
+  }
+  
+  .achievement {
+    background-color: var(--color-success);
+    color: var(--color-white);
+  }
+} 

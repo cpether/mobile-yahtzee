@@ -1,0 +1,39 @@
+.game-scorecard-view {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.scorecard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-4);
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.scorecard-header h2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.scorecard-spacer {
+  width: 80px; /* Same width as back button for centering */
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+  .scorecard-header {
+    padding: var(--spacing-5);
+  }
+  
+  .scorecard-header h2 {
+    font-size: var(--font-size-xl);
+  }
+} 
