@@ -1,0 +1,292 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Auto-Commit Conventional Changes
+
+## Rule Type: Agent Requested
+
+This rule implements a **Check and Adapt Workflow** that automatically detects whether changes are on disk and adapts the commit process accordingly. Each user prompt results in one commit, summarizing all changes made in response to that prompt.
+
+## Check and Adapt Workflow
+
+1. **Assistant makes changes** (using any method)
+2. **Assistant checks if changes are on disk** (using `git status`)
+3. **If changes exist on disk** → Auto-commit immediately
+4. **If no changes on disk** → Ask user to Accept, then wait for "go"
+5. **Changes are committed** to session branch
+
+## Behavior
+
+After processing each user prompt:
+
+1. **Make changes** using any available method
+2. **Check git status** to see if changes are on disk
+3. **Adapt workflow** based on what's detected:
+   - **Changes detected** → Auto-commit
+   - **No changes** → Request Accept + "go"
+4. **Generate conventional commit message** referencing the prompt
+5. **Commit changes** to the current session branch
+
+## Commit Frequency
+
+- **One commit per user prompt**
+- **Auto-commit** when changes are detected on disk
+- **Manual commit** when changes require acceptance
+- Do **not** commit after every file edit or partial change
+
+## Commit Message Format
+
+Use the following format:
+
+```
+<type>[optional scope]: <description>
+
+Prompt: <user prompt>
+
+[optional body]
+[optional footer(s)]
+```
+
+### Example
+
+```
+feat(game-logic): add tile sliding animation
+
+Prompt: add tile sliding animation
+
+- Implement smooth tile movement
+- Update animation timing
+```
+
+## Implementation
+
+```typescript
+// Check and Adapt Workflow
+async function checkAndAdaptWorkflow(prompt: string, changes: FileChange[]) {
+  // 1. Make changes (using any method)
+  await makeChanges(changes);
+  
+  // 2. Check if changes are on disk
+  const gitStatus = await runGitCommand('git status --porcelain');
+  
+  if (gitStatus.trim()) {
+    // Changes detected on disk - Auto-commit
+    console.log("✅ Changes detected on disk - Auto-committing...");
+    await autoCommitChanges(prompt, changes);
+  } else {
+    // No changes on disk - Request Accept + "go"
+    console.log("⚠️ No changes detected - Please accept changes and type 'go'");
+    await waitForGoCommand();
+    await commitChanges(prompt, changes);
+  }
+}
+
+async function autoCommitChanges(prompt: string, changes: FileChange[]) {
+  const commitMessage = generateConventionalCommit(prompt, changes);
+  await runGitCommand(`git add . && git commit -m "${commitMessage}"`);
+  await pushToSessionBranch();
+}
+```
+
+## Assistant Response Templates
+
+### When Changes Are Detected (Auto-Commit):
+```
+✅ Changes made and committed for your prompt!
+
+**What was done:**
+- [List of changes made]
+- [Files modified/created]
+- [Features added/fixed]
+
+**Commit:** `feat(scope): description`
+**Status:** ✅ Committed and pushed to session branch
+```
+
+### When No Changes Detected (Manual Accept + Go):
+```
+✅ Changes made for your prompt!
+
+**Next Steps:**
+1. Click "Accept All" in Cursor to apply the changes
+2. Type "go" to automatically commit the changes
+
+The commit will include:
+- Conventional commit message referencing your prompt
+- All changes made in response to this prompt
+- Proper session branch management
+```
+
+## Prompt Analysis
+
+- **Type**: Determine if the prompt is a feature, fix, refactor, etc.
+- **Scope**: Extract the main area affected (component, feature, etc.)
+- **Description**: Summarize the main change
+- **Body**: List key changes (optional)
+- **Footer**: Reference issues or breaking changes (optional)
+
+## Best Practices
+
+1. **Keep commits atomic**: Each commit should represent all changes for a single prompt
+2. **Use descriptive messages**: Reference the prompt for traceability
+3. **Check before committing**: Always verify changes are on disk before auto-committing
+4. **Adapt to reality**: Let the system tell us what workflow to use
+
+## Integration with Session Branch Management
+
+- Commits are made to the current session branch
+- Each prompt = one commit
+- Branches are managed per session as described in the session branch management rule
+
+## Error Handling
+
+### For Auto-Commit:
+If auto-commit fails:
+1. **Log the error** for debugging
+2. **Provide manual commit instructions** to the user
+3. **Continue with development** without blocking the workflow
+
+### For Manual Accept + Go:
+If the user hasn't accepted changes:
+1. **Remind them to accept** the changes in Cursor
+2. **Wait for "go" command**
+3. **Check for changes** before committing
+4. **Continue with development** without blocking the workflow
+
+## Examples
+
+### Auto-Commit Scenario:
+```
+✅ Changes made and committed for your prompt!
+
+**What was done:**
+- Created new component: src/components/Tile.tsx
+- Updated game logic in src/utils/gameLogic.ts
+- Added tile sliding animation functionality
+
+**Commit:** `feat(game): implement tile sliding mechanics`
+**Status:** ✅ Committed and pushed to session branch
+```
+
+### Manual Accept + Go Scenario:
+```
+✅ Changes made for your prompt!
+
+**Next Steps:**
+1. Click "Accept All" in Cursor to apply the changes
+2. Type "go" to automatically commit the changes
+
+The commit will include:
+- fix(ui): resolve overlay bug on game board
+- Prompt: fix overlay bug on game board
+- All overlay and state update fixes
+```
+
+## Configuration
+
+The rule can be configured with:
+
+- **Auto-commit when changes detected**: Enable/disable automatic commits
+- **Trigger command**: Change from "go" to another command if desired
+- **Commit message templates**: Custom templates for specific project needs
+- **Scope mapping**: Map file paths to conventional scopes
+- **Issue tracking integration**: Link commits to issue numbers automatically
+
+## Workflow Checklist
+
+### For Each Prompt:
+- [ ] Make all necessary changes
+- [ ] Check git status for changes on disk
+- [ ] If changes detected → Auto-commit
+- [ ] If no changes → Request Accept + "go"
+- [ ] Confirm commit success
+- [ ] Push to session branch (if needed)
+
+## Detection Logic
+
+**Changes on Disk Detection:**
+- Use `git status --porcelain` to check for uncommitted changes
+- If output is non-empty → Changes exist on disk
+- If output is empty → No changes on disk
+
+**Workflow Adaptation:**
+- **Changes detected** → Use auto-commit workflow
+- **No changes detected** → Use manual Accept + "go" workflow
+
+## File Change Detection
+
+Monitor the following types of changes:
+
+- **New files created**: Usually indicates a new feature
+- **Existing files modified**: Could be fixes, improvements, or refactoring
+- **Files deleted**: Cleanup or removal of deprecated code
+- **Configuration changes**: Build, CI, or environment updates
+
+## Commit Message Generation
+
+The commit message should include:
+
+1. **Type and scope**: What type of change and which part of the system
+2. **Description**: Clear, concise explanation of what was changed
+3. **Body**: Detailed explanation of why the change was made
+4. **Footer**: References to issues, breaking changes, or other metadata
+
+## Best Practices
+
+1. **Keep commits atomic**: Each commit should represent a single logical change
+2. **Use descriptive messages**: Explain what and why, not how
+3. **Reference issues**: Link commits to relevant issues or pull requests
+4. **Follow team conventions**: Adapt to your team's specific needs
+5. **Review before pushing**: Ensure commit messages are clear and accurate
+
+## Integration with Git Hooks
+
+This rule can be integrated with Git hooks for additional validation:
+
+- **Pre-commit hooks**: Validate commit message format
+- **Post-commit hooks**: Update issue trackers or documentation
+- **Pre-push hooks**: Ensure all commits follow conventions
+
+## Examples of Generated Commits
+
+Based on different types of changes:
+
+### Feature Addition
+```
+feat(game): implement tile sliding mechanics
+
+- Add smooth tile movement animations
+- Implement valid move detection
+- Create tile interaction handlers
+- Add visual feedback for valid moves
+
+Part of puzzle game core functionality
+```
+
+### Bug Fix
+```
+fix(ui): resolve responsive layout issues on mobile
+
+- Fix grid layout breaking on small screens
+- Adjust tile sizes for mobile devices
+- Improve touch target sizes for accessibility
+- Add proper viewport meta tags
+
+Fixes mobile usability issues reported by users
+```
+
+### Refactoring
+```
+refactor(state): migrate to Zustand for better performance
+
+- Replace Redux with Zustand for state management
+- Simplify state updates and subscriptions
+- Reduce bundle size by removing Redux dependencies
+- Improve developer experience with simpler API
+
+Improves performance and reduces complexity
+```
+
+This rule ensures that all changes made by Cursor are properly documented and follow consistent commit conventions, making the project history clear and maintainable.

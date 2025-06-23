@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+<rule>
+name: single-app-instance-before-dev
+version: 1.0
+priority: high
+
+# Ensure only one app instance is running before starting dev server
+
+## Description
+Before running the development server with `npm run dev`, always kill all previously running instances of the app (including any `vite`, `node`, or `npm run dev` processes related to the project). This guarantees that only one instance of the app is running at any time, preventing port conflicts and resource waste.
+
+## Actions
+- Before executing `npm run dev`, run:
+  - `pkill -f "vite"`
+  - `pkill -f "npm run dev"`
+  - Optionally, `pkill -f "node.*vite"` for extra safety
+- Only after confirming all previous instances are killed, proceed to start the new dev server.
+
+## Rationale
+- Prevents multiple dev servers from running simultaneously
+- Avoids port conflicts and confusion
+- Ensures a clean development environment
+
+## Examples
+
+### Bad
+```
+$ npm run dev
+# (multiple Vite servers running, port conflicts)
+```
+
+### Good
+```
+$ pkill -f "vite"
+$ pkill -f "npm run dev"
+$ npm run dev
+# (only one Vite server running)
+```
+
+## Enforcement
+- Always perform the kill commands before starting the dev server.
+- If you are automating or scripting, include these steps in your workflow.
+</rule>

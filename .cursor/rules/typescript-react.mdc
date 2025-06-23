@@ -1,0 +1,108 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+<rule>
+name: typescript_react
+description: Enforce best practices for React/JSX with TypeScript
+filters:
+  - type: file_extension
+    pattern: "\.tsx$"
+  - type: content
+    pattern: "(?s).*"
+
+actions:
+  - type: suggest
+    message: |
+      # TypeScript React/JSX Rules
+
+      ## Core Principles
+      - **Type all component props and state**
+      - **Use React.FC or explicit function types for components**
+      - **Type event handlers and refs**
+      - **Type hooks and custom hooks**
+      - **Prefer readonly for props**
+
+      ## Component Typing
+      ```typescript
+      // ✅ Good - typed props
+      interface UserCardProps {
+        user: User;
+        onEdit?: (user: User) => void;
+        onDelete?: (userId: string) => void;
+      }
+
+      const UserCard: React.FC<UserCardProps> = ({ user, onEdit, onDelete }) => (
+        <div>
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+          {onEdit && <button onClick={() => onEdit(user)}>Edit</button>}
+          {onDelete && <button onClick={() => onDelete(user.id)}>Delete</button>}
+        </div>
+      );
+      ```
+
+      ## Event Handlers
+      ```typescript
+      // ✅ Good - typed event handler
+      const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        setValue(e.target.value);
+      };
+      ```
+
+      ## useRef and useState
+      ```typescript
+      // ✅ Good - typed refs
+      const inputRef = useRef<HTMLInputElement>(null);
+
+      // ✅ Good - typed state
+      const [count, setCount] = useState<number>(0);
+      ```
+
+      ## Custom Hooks
+      ```typescript
+      // ✅ Good - typed custom hook
+      function useUser(id: string): [User | null, boolean] {
+        const [user, setUser] = useState<User | null>(null);
+        const [loading, setLoading] = useState(false);
+        // ...
+        return [user, loading];
+      }
+      ```
+
+      ## JSX Element Types
+      ```typescript
+      // ✅ Good - typing JSX elements
+      const element: JSX.Element = <UserCard user={user} />;
+      ```
+
+      ## Best Practices
+      1. **Type all props and state**
+      2. **Use React.FC for functional components**
+      3. **Type event handlers and refs**
+      4. **Type hooks and custom hooks**
+      5. **Prefer readonly for props**
+      6. **Avoid any in component code**
+      7. **Use type inference for hooks when possible**
+      8. **Document complex props with JSDoc**
+      9. **Use union types for variant props**
+      10. **Type children explicitly if used**
+
+examples:
+  - input: |
+      // Bad: Untyped props
+      function Button(props) {
+        return <button>{props.label}</button>;
+      }
+    output: |
+      // Good: Typed props
+      interface ButtonProps {
+        label: string;
+      }
+      const Button: React.FC<ButtonProps> = ({ label }) => <button>{label}</button>;
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

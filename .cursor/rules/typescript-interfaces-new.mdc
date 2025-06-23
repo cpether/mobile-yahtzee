@@ -1,0 +1,247 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+<rule>
+name: typescript_interfaces
+description: Enforce best practices for TypeScript interfaces and type definitions
+filters:
+  - type: file_extension
+    pattern: "\\.(ts|tsx)$"
+  - type: content
+    pattern: "(?s).*"
+
+actions:
+  - type: suggest
+    message: |
+      # TypeScript Interface and Type Rules
+
+      ## Core Principles
+
+      - **Prefer interfaces over types** for object shapes
+      - **Use descriptive names** that explain the purpose
+      - **Keep interfaces focused** on single responsibilities
+      - **Extend interfaces** rather than duplicating properties
+      - **Use readonly properties** for immutable data
+
+      ## Interface Design Requirements
+
+      ### Interface Naming
+      ```typescript
+      // ❌ Bad - unclear purpose
+      interface Data {
+        id: string;
+        value: number;
+      }
+
+      // ✅ Good - descriptive name
+      interface UserProfile {
+        id: string;
+        displayName: string;
+        email: string;
+      }
+      ```
+
+      ### Single Responsibility
+      ```typescript
+      // ❌ Bad - multiple concerns
+      interface User {
+        id: string;
+        name: string;
+        email: string;
+        password: string;
+        lastLogin: Date;
+        preferences: UserPreferences;
+        billing: BillingInfo;
+      }
+
+      // ✅ Good - focused interfaces
+      interface User {
+        id: string;
+        name: string;
+        email: string;
+      }
+
+      interface UserAuth {
+        password: string;
+        lastLogin: Date;
+      }
+
+      interface UserSettings {
+        preferences: UserPreferences;
+        billing: BillingInfo;
+      }
+      ```
+
+      ### Interface Extension
+      ```typescript
+      // ✅ Good - extend base interfaces
+      interface BaseEntity {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+      }
+
+      interface User extends BaseEntity {
+        name: string;
+        email: string;
+      }
+
+      interface Product extends BaseEntity {
+        name: string;
+        price: number;
+        category: string;
+      }
+      ```
+
+      ### Readonly Properties
+      ```typescript
+      // ✅ Good - immutable properties
+      interface Configuration {
+        readonly apiUrl: string;
+        readonly version: string;
+        readonly timeout: number;
+      }
+      ```
+
+      ### Optional Properties
+      ```typescript
+      // ✅ Good - optional properties with defaults
+      interface UserForm {
+        name: string;
+        email: string;
+        phone?: string;
+        avatar?: string;
+      }
+
+      // Use with defaults
+      function createUser(data: UserForm): User {
+        return {
+          ...data,
+          phone: data.phone ?? '',
+          avatar: data.avatar ?? '/default-avatar.png'
+        };
+      }
+      ```
+
+      ### Index Signatures
+      ```typescript
+      // ✅ Good - flexible object shapes
+      interface StringMap {
+        [key: string]: string;
+      }
+
+      interface NumberMap {
+        [key: string]: number;
+      }
+
+      // Specific key types
+      interface ApiResponse<T> {
+        data: T;
+        status: number;
+        [key: `header-${string}`]: string;
+      }
+      ```
+
+      ## Type Definitions
+
+      ### Union Types
+      ```typescript
+      // ✅ Good - union types for multiple values
+      type Status = 'pending' | 'active' | 'inactive' | 'deleted';
+
+      type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+      ```
+
+      ### Template Literal Types
+      ```typescript
+      // ✅ Good - template literal types
+      type ApiEndpoint = `/api/${string}`;
+      type HttpStatus = `${2 | 3 | 4 | 5}${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`;
+      ```
+
+      ### Conditional Types
+      ```typescript
+      // ✅ Good - conditional types
+      type NonNullable<T> = T extends null | undefined ? never : T;
+
+      type ArrayElement<T> = T extends Array<infer U> ? U : never;
+
+      type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+      ```
+
+      ### Mapped Types
+      ```typescript
+      // ✅ Good - mapped types
+      type Readonly<T> = {
+        readonly [P in keyof T]: T[P];
+      };
+
+      type Partial<T> = {
+        [P in keyof T]?: T[P];
+      };
+
+      type Pick<T, K extends keyof T> = {
+        [P in K]: T[P];
+      };
+      ```
+
+      ## Best Practices
+
+      1. **Use interfaces for object shapes** and types for unions/primitives
+      2. **Prefix interfaces with 'I' only when necessary** for clarity
+      3. **Group related interfaces** in the same file
+      4. **Export interfaces** that are used across modules
+      5. **Use intersection types** to combine multiple interfaces
+      6. **Prefer composition over inheritance** for complex relationships
+      7. **Document complex interfaces** with JSDoc comments
+
+examples:
+  - input: |
+      // Bad: Unclear interface name
+      interface Data {
+        id: string;
+        value: number;
+      }
+    output: |
+      // Good: Descriptive interface name
+      interface UserProfile {
+        id: string;
+        displayName: string;
+        email: string;
+      }
+
+  - input: |
+      // Bad: Multiple concerns in one interface
+      interface User {
+        id: string;
+        name: string;
+        email: string;
+        password: string;
+        lastLogin: Date;
+        preferences: UserPreferences;
+        billing: BillingInfo;
+      }
+    output: |
+      // Good: Focused interfaces
+      interface User {
+        id: string;
+        name: string;
+        email: string;
+      }
+
+      interface UserAuth {
+        password: string;
+        lastLogin: Date;
+      }
+
+      interface UserSettings {
+        preferences: UserPreferences;
+        billing: BillingInfo;
+      }
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

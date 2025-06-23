@@ -1,0 +1,133 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+<rule>
+name: typescript_type_safety
+description: Enforce strict type safety practices in TypeScript code
+filters:
+  - type: file_extension
+    pattern: "\\.(ts|tsx)$"
+  - type: content
+    pattern: "(?s).*"
+
+actions:
+  - type: suggest
+    message: |
+      # TypeScript Type Safety Rules
+
+      ## Core Principles
+
+      - **Never use `any` type** - defeats the purpose of TypeScript
+      - **Use strict mode** - enable all strict compiler options
+      - **Prefer explicit types** over type inference when clarity is needed
+      - **Use union types** for multiple possible values
+      - **Leverage discriminated unions** for complex state management
+
+      ## Type Safety Requirements
+
+      ### Avoid `any` Type
+      ```typescript
+      // ❌ Bad - loses type safety
+      const data: any = fetchData();
+
+      // ✅ Good - explicit typing
+      const data: UserData = fetchData();
+      ```
+
+      ### Use Strict Null Checks
+      ```typescript
+      // ❌ Bad - potential runtime errors
+      function getName(user: User): string {
+        return user.name; // Could be undefined
+      }
+
+      // ✅ Good - handle null/undefined
+      function getName(user: User): string {
+        return user.name ?? 'Unknown';
+      }
+      ```
+
+      ### Prefer Union Types Over Enums
+      ```typescript
+      // ❌ Bad - enum overhead
+      enum Status {
+        Active = 'active',
+        Inactive = 'inactive'
+      }
+
+      // ✅ Good - union type
+      type Status = 'active' | 'inactive';
+      ```
+
+      ### Use Discriminated Unions
+      ```typescript
+      // ✅ Good - discriminated union
+      type Result<T> = 
+        | { success: true; data: T }
+        | { success: false; error: string };
+
+      function handleResult(result: Result<User>) {
+        if (result.success) {
+          console.log(result.data.name); // TypeScript knows data exists
+        } else {
+          console.error(result.error); // TypeScript knows error exists
+        }
+      }
+      ```
+
+      ### Generic Constraints
+      ```typescript
+      // ✅ Good - constrained generics
+      function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+        return obj[key];
+      }
+      ```
+
+      ### Type Guards
+      ```typescript
+      // ✅ Good - type guards
+      function isUser(value: unknown): value is User {
+        return typeof value === 'object' && 
+               value !== null && 
+               'id' in value && 
+               'name' in value;
+      }
+      ```
+
+      ## Best Practices
+
+      1. **Enable strict mode** in tsconfig.json
+      2. **Use `unknown` instead of `any`** for truly unknown values
+      3. **Prefer `const` assertions** for readonly data
+      4. **Use branded types** for type-safe IDs and values
+      5. **Leverage conditional types** for complex type logic
+      6. **Use template literal types** for string manipulation
+      7. **Prefer mapped types** over manual type definitions
+
+examples:
+  - input: |
+      // Bad: Using any type
+      const data: any = fetchData();
+      const result = data.someProperty;
+    output: |
+      // Good: Explicit typing
+      const data: UserData = fetchData();
+      const result = data.someProperty;
+
+  - input: |
+      // Bad: No null checks
+      function getName(user: User): string {
+        return user.name;
+      }
+    output: |
+      // Good: Handle null/undefined
+      function getName(user: User): string {
+        return user.name ?? 'Unknown';
+      }
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

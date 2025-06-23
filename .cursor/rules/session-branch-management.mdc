@@ -1,0 +1,327 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Session Branch Management
+
+## Rule Type: Agent Requested
+
+This rule ensures that every new chat session creates a new branch for changes and automatically commits changes to that session's branch.
+
+## Behavior
+
+At the start of each new chat session:
+
+1. **Check for uncommitted changes** on current branch
+2. **Handle uncommitted changes** appropriately (commit, stash, or warn user)
+3. **Switch to main branch** to ensure clean base
+4. **Create a new branch** with a descriptive name based on the session context
+5. **Switch to the new branch** for all subsequent changes
+6. **Ensure auto-commit is working** to commit changes to the session branch
+7. **Provide branch information** to the user
+
+## Branch Naming Convention
+
+Create branches using the following format:
+
+```
+session/<timestamp>-<description>
+```
+
+Examples:
+- `session/20241221-1430-add-user-authentication`
+- `session/20241221-1500-fix-game-bug`
+- `session/20241221-1600-refactor-components`
+
+## Session Detection
+
+A new session is detected when:
+
+1. **New conversation starts** (no previous context)
+2. **User explicitly requests** a new session
+3. **Significant time gap** between interactions (>30 minutes)
+4. **Different topic** or major context shift
+
+## Implementation Steps
+
+### 1. Session Start Detection
+```bash
+# Check if we're in a new session
+if [ ! -f .cursor/session-info.json ]; then
+  # New session detected
+  create_session_branch
+fi
+```
+
+### 2. Handle Uncommitted Changes
+```bash
+# Check for uncommitted changes
+if [ -n "$(git status --porcelain)" ]; then
+  echo "⚠️  Uncommitted changes detected on current branch"
+  
+  # Option 1: Auto-commit changes to current session branch
+  if [ -f .cursor/session-info.json ]; then
+    CURRENT_BRANCH=$(git branch --show-current)
+    echo "📝 Auto-committing changes to current session branch: $CURRENT_BRANCH"
+    git add .
+    git commit -m "feat: auto-commit pending changes before new session"
+  else
+    # Option 2: Stash changes if not on a session branch
+    echo "📦 Stashing uncommitted changes"
+    git stash push -m "Auto-stash before new session: $(date)"
+  fi
+fi
+```
+
+### 3. Branch Creation (Always from Main)
+```bash
+# Generate branch name
+TIMESTAMP=$(date +"%Y%m%d-%H%M")
+SESSION_DESC=$(extract_session_description)
+BRANCH_NAME="session/${TIMESTAMP}-${SESSION_DESC}"
+
+# Ensure we're on main branch first
+git checkout main
+git pull origin main
+
+# Create and switch to new branch from main
+git checkout -b "$BRANCH_NAME"
+```
+
+### 4. Session Tracking
+```json
+// .cursor/session-info.json
+{
+  "session_id": "20241221-1430",
+  "branch_name": "session/20241221-1430-add-user-authentication",
+  "start_time": "2024-12-21T14:30:00Z",
+  "description": "Adding user authentication system",
+  "changes_made": 0,
+  "commits_made": 0,
+  "previous_session": {
+    "branch": "session/20241221-1400-fix-bug",
+    "stashed_changes": false
+  }
+}
+```
+
+## Auto-Commit Integration
+
+Ensure the auto-commit rule works correctly:
+
+1. **Verify auto-commit is enabled** in `.cursor/rules/auto-commit-conventional.mdc`
+2. **Commit after each significant change** or at the end of each interaction
+3. **Use conventional commit messages** following the existing rule
+4. **Stage all changes** before committing
+
+## Branch Management Commands
+
+### Create Session Branch (Always from Main)
+```bash
+# Check for uncommitted changes first
+if [ -n "$(git status --porcelain)" ]; then
+  echo "⚠️  Uncommitted changes detected on current branch"
+  
+  # Determine how to handle changes
+  if [ -f .cursor/session-info.json ]; then
+    # We're on a session branch - commit the changes
+    CURRENT_BRANCH=$(git branch --show-current)
+    echo "📝 Auto-committing changes to current session branch: $CURRENT_BRANCH"
+    git add .
+    git commit -m "feat: auto-commit pending changes before new session"
+  else
+    # We're not on a session branch - stash the changes
+    echo "📦 Stashing uncommitted changes"
+    git stash push -m "Auto-stash before new session: $(date)"
+  fi
+fi
+
+# Generate descriptive branch name
+SESSION_DESC=$(echo "$USER_PROMPT" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-\|-$//g')
+TIMESTAMP=$(date +"%Y%m%d-%H%M")
+BRANCH_NAME="session/${TIMESTAMP}-${SESSION_DESC}"
+
+# CRITICAL: Always start from main branch
+git checkout main
+git pull origin main
+
+# Create and switch to new branch from main
+git checkout -b "$BRANCH_NAME"
+
+# Update session info
+echo "{
+  \"session_id\": \"${TIMESTAMP}\",
+  \"branch_name\": \"${BRANCH_NAME}\",
+  \"start_time\": \"$(date -u +"%Y-%m-%dT%H:%M:%SZ")\",
+  \"description\": \"${USER_PROMPT}\",
+  \"changes_made\": 0,
+  \"commits_made\": 0
+}" > .cursor/session-info.json
+```
+
+### Commit Session Changes
+```bash
+# Stage all changes
+git add .
+
+# Generate conventional commit message
+COMMIT_MSG=$(generate_conventional_commit "$USER_PROMPT" "$CHANGES_MADE")
+
+# Commit changes
+git commit -m "$COMMIT_MSG"
+
+# Update session info
+jq '.commits_made += 1' .cursor/session-info.json > .cursor/session-info.tmp && mv .cursor/session-info.tmp .cursor/session-info.json
+```
+
+## Uncommitted Changes Handling Strategies
+
+### Strategy 1: Auto-Commit to Current Session Branch
+**When:** Current branch is a session branch with uncommitted changes
+**Action:** Commit changes to current session branch before creating new session
+**Benefits:** Preserves work, maintains session history
+**Example:**
+```bash
+# On session/20241221-1400-fix-bug with uncommitted changes
+git add .
+git commit -m "feat: auto-commit pending changes before new session"
+git checkout main
+git checkout -b session/20241221-1430-new-feature
+```
+
+### Strategy 2: Stash Changes
+**When:** Current branch is not a session branch (e.g., main, feature branch)
+**Action:** Stash changes before switching to main
+**Benefits:** Preserves work without creating commits on non-session branches
+**Example:**
+```bash
+# On main branch with uncommitted changes
+git stash push -m "Auto-stash before new session: 2024-12-21 14:30"
+git checkout main  # Already on main
+git checkout -b session/20241221-1430-new-feature
+```
+
+### Strategy 3: User Decision
+**When:** Complex uncommitted changes or user preference
+**Action:** Ask user how to handle changes
+**Options:**
+- Commit changes to current branch
+- Stash changes for later
+- Discard changes (with confirmation)
+- Continue on current branch
+
+## Session End Actions
+
+At the end of each session:
+
+1. **Commit any remaining changes** to the session branch
+2. **Provide summary** of changes made
+3. **Offer to merge** to main branch if appropriate
+4. **Clean up session info** file
+5. **Handle any stashed changes** from previous sessions
+
+## Error Handling
+
+If branch creation fails:
+
+1. **Fall back to main branch** with warning
+2. **Log the error** for debugging
+3. **Continue with development** on main branch
+4. **Notify user** of the issue
+
+## Integration with Existing Rules
+
+This rule works in conjunction with:
+
+- **Auto-commit rule**: Ensures changes are committed to the session branch
+- **Conventional commits**: Maintains proper commit message format
+- **Git workflow**: Integrates with existing git practices
+
+## User Communication
+
+Always inform the user about:
+
+1. **Uncommitted changes detected** and how they're being handled
+2. **Switching to main branch** before creating new session branch
+3. **New session branch created** with name and description
+4. **Current branch status** during development
+5. **Changes committed** to the session branch
+6. **Options for merging** at session end
+
+## Examples
+
+### Session Start with Uncommitted Changes
+```
+🔄 New session detected
+⚠️  Uncommitted changes detected on current branch
+📝 Auto-committing changes to current session branch: session/20241221-1400-fix-bug
+✅ Committed: feat: auto-commit pending changes before new session
+🔄 Switching to main branch...
+📝 Creating branch from main: session/20241221-1430-add-user-auth
+✅ Switched to session/20241221-1430-add-user-auth
+📋 Ready to make changes for: Adding user authentication system
+```
+
+### Session Start with Stashed Changes
+```
+🔄 New session detected
+⚠️  Uncommitted changes detected on main branch
+📦 Stashing uncommitted changes
+🔄 Switching to main branch...
+📝 Creating branch from main: session/20241221-1430-add-user-auth
+✅ Switched to session/20241221-1430-add-user-auth
+📋 Ready to make changes for: Adding user authentication system
+💡 Note: Previous changes are stashed and can be retrieved later
+```
+
+### Change Made
+```
+✨ Created src/components/Auth.tsx
+📝 Auto-committing changes...
+✅ Committed: feat(auth): add user authentication component
+
+- Implement login form with validation
+- Add authentication state management
+- Create protected route wrapper
+```
+
+### Session End
+```
+🏁 Session complete
+📊 Summary:
+   - Branch: session/20241221-1430-add-user-auth
+   - Changes: 3 files modified
+   - Commits: 2 commits made
+   
+🤔 Would you like to merge these changes to main?
+```
+
+## Configuration
+
+The rule can be configured with:
+
+- **Branch naming patterns**: Customize branch name format
+- **Session timeout**: Adjust when to consider a new session
+- **Auto-merge settings**: Automatically merge certain types of changes
+- **Cleanup policies**: When to delete old session branches
+- **Uncommitted changes handling**: Choose default strategy (auto-commit, stash, or ask user)
+
+## Best Practices
+
+1. **Always branch from main**: Ensures clean, independent session branches
+2. **Handle uncommitted changes gracefully**: Don't lose work when switching sessions
+3. **Keep sessions focused**: One major feature or fix per session
+4. **Commit frequently**: Use auto-commit to save progress
+5. **Use descriptive names**: Make branch names meaningful
+6. **Review before merging**: Always review session changes before merging to main
+7. **Clean up old branches**: Periodically remove completed session branches
+
+## Important Notes
+
+- **CRITICAL**: New session branches must ALWAYS be created from the main branch
+- This prevents session branches from being based on other session branches
+- Ensures each session starts with a clean, up-to-date codebase
+- Makes merging easier and reduces conflicts
+- **Uncommitted changes are preserved** through auto-commit or stashing
+- **Session history is maintained** when auto-committing to current session branches
