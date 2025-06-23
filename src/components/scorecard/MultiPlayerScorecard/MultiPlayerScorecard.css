@@ -157,14 +157,14 @@
 }
 
 .score-cell.scored {
-  background: var(--color-gray-700);
+  background: var(--color-secondary-dark);
   color: var(--color-white);
   cursor: default;
   font-weight: var(--font-weight-semibold);
 }
 
 .score-cell.scored:hover {
-  background: var(--color-gray-700);
+  background: var(--color-secondary-dark);
 }
 
 .score-cell.available {
