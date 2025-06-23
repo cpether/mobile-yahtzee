@@ -16,18 +16,12 @@ export const OnlineLobby: React.FC<OnlineLobbyProps> = ({
   onGameStart,
   onLeaveRoom
 }) => {
-  const [isReady, setIsReady] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const currentPlayer = room.players.find(p => p.id === currentPlayerId);
   const isHost = currentPlayer?.isHost || false;
   const canStartGame = room.status === 'ready' && isHost;
   const allPlayersReady = room.players.length >= 2 && room.players.every(p => p.isReady);
-
-  useEffect(() => {
-    if (currentPlayer) {
-      setIsReady(currentPlayer.isReady);
-    }
-  }, [currentPlayer]);
+  const isReady = currentPlayer?.isReady || false;
 
   useEffect(() => {
     const handlePlayerReadyChanged = () => {
@@ -49,7 +43,6 @@ export const OnlineLobby: React.FC<OnlineLobbyProps> = ({
 
   const handleReadyToggle = () => {
     const newReadyState = !isReady;
-    setIsReady(newReadyState);
     socketService.setPlayerReady(newReadyState);
   };
 

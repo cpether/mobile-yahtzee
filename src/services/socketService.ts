@@ -39,38 +39,33 @@ class SocketService {
   // Connection management
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
-      console.log('🔌 Attempting to connect to server:', this.serverUrl);
-      
       if (this.socket?.connected) {
-        console.log('✅ Already connected to server');
         resolve();
         return;
       }
 
       this.connectionState.status = 'connecting';
-      console.log('🔄 Creating new socket connection...');
-      
       this.socket = io(this.serverUrl, {
         transports: ['websocket', 'polling'],
         timeout: 10000,
       });
 
       this.socket.on('connect', () => {
-        console.log('✅ Connected to server successfully');
+        console.log('Connected to server');
         this.connectionState.status = 'connected';
         this.emit('connection-changed', this.connectionState);
         resolve();
       });
 
       this.socket.on('disconnect', (reason) => {
-        console.log('❌ Disconnected from server:', reason);
+        console.log('Disconnected from server:', reason);
         this.connectionState.status = 'disconnected';
         this.connectionState.error = reason;
         this.emit('connection-changed', this.connectionState);
       });
 
       this.socket.on('connect_error', (error) => {
-        console.error('❌ Connection error:', error);
+        console.error('Connection error:', error);
         this.connectionState.status = 'error';
         this.connectionState.error = error.message;
         this.emit('connection-changed', this.connectionState);
@@ -115,26 +110,19 @@ class SocketService {
 
   // Room management
   async createRoom(playerName: string): Promise<void> {
-    console.log('🎮 Attempting to create room for player:', playerName);
-    console.log('🔌 Socket connected:', this.socket?.connected);
-    
     if (!this.socket?.connected) {
-      console.error('❌ Socket not connected, attempting to connect...');
       throw new Error('Not connected to server');
     }
 
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        console.error('⏰ Room creation timed out');
         reject(new Error('Room creation timed out'));
       }, 10000);
 
-      console.log('📤 Emitting create-room event with data:', { playerName });
       this.socket!.emit('create-room', { playerName } as CreateRoomData);
 
       // Wait for room creation response
       const onRoomCreated = (data: RoomCreatedData) => {
-        console.log('✅ Room created successfully:', data);
         clearTimeout(timeout);
         this.connectionState.room = data.room;
         this.connectionState.playerId = data.playerId;
@@ -143,7 +131,6 @@ class SocketService {
       };
 
       const onRoomError = (data: RoomErrorData) => {
-        console.error('❌ Room creation error:', data);
         clearTimeout(timeout);
         reject(new Error(data.message));
       };

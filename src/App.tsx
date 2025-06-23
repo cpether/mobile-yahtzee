@@ -74,13 +74,9 @@ function App() {
   };
 
   const handleCreateRoom = async (playerName: string) => {
-    console.log('🎯 App: handleCreateRoom called with playerName:', playerName);
     try {
-      console.log('🔄 App: Calling socketService.createRoom...');
       await socketService.createRoom(playerName);
-      console.log('✅ App: Room creation successful');
     } catch (err) {
-      console.error('❌ App: Room creation failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to create room');
     }
   };

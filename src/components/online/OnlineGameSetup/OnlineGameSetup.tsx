@@ -25,35 +25,24 @@ export const OnlineGameSetup: React.FC<OnlineGameSetupProps> = ({
   const isJoin = mode === 'online-join';
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log('🎮 OnlineGameSetup: Form submitted');
-    console.log('📝 Player name:', playerName);
-    console.log('🏠 Is host:', isHost);
-    console.log('🔗 Is join:', isJoin);
-    
     e.preventDefault();
     
     if (!playerName.trim()) {
-      console.log('❌ No player name provided');
       return;
     }
 
-    console.log('⏳ Setting loading state...');
     setIsLoading(true);
 
     try {
       if (isHost) {
-        console.log('🎯 Calling onCreateRoom...');
         onCreateRoom(playerName.trim());
       } else if (isJoin) {
         if (!gameCode.trim()) {
-          console.log('❌ No game code provided');
           return;
         }
-        console.log('🔗 Calling onJoinRoom...');
         onJoinRoom(gameCode.trim().toUpperCase(), playerName.trim());
       }
     } finally {
-      console.log('✅ Resetting loading state...');
       setIsLoading(false);
     }
   };
