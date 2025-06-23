@@ -87,36 +87,38 @@ This document outlines the user interface design requirements for the mobile Yah
 - **Roll Counter**: Shows remaining rolls
 - **Scorecard**: Compact, scrollable scoring area
 
-### 3. Scorecard Detail View
+### 3. Scorecard Detail View (Multi-Player)
 
 ```
 ┌─────────────────────────┐
-│ ← Back   SCORECARD      │
+│ ← Back   ALL SCORES     │
 ├─────────────────────────┤
-│ UPPER SECTION           │
-│ ┌─ Ones      [3]  ──┐   │
-│ ├─ Twos      [ ]  ──┤   │
-│ ├─ Threes    [9]  ──┤   │
-│ ├─ Fours     [ ]  ──┤   │
-│ ├─ Fives     [15] ──┤   │
-│ └─ Sixes     [ ]  ──┘   │
-│ Bonus: 35 (Need 63)     │
-│                         │
-│ LOWER SECTION           │
-│ ┌─ 3 of Kind  [ ] ──┐   │
-│ ├─ 4 of Kind  [ ] ──┤   │
-│ ├─ Full House [25]──┤   │
-│ └─ Small Str  [ ] ──┘   │
-│                         │
-│ TOTAL: 52               │
+│ │ Sarah │ Mike │ Lisa │ │
+│ ├───────┼──────┼──────┤ │
+│ │  [3]  │ [2]  │ [ ]  │ │ Ones
+│ │  [ ]  │ [4]  │ [2]  │ │ Twos  
+│ │  [9]  │ [ ]  │ [6]  │ │ Threes
+│ │  [ ]  │ [8]  │ [ ]  │ │ Fours
+│ │ [15]  │ [10] │ [5]  │ │ Fives
+│ │  [ ]  │ [ ]  │ [12] │ │ Sixes
+│ ├───────┼──────┼──────┤ │
+│ │  27   │  24  │  25  │ │ Upper
+│ │   0   │   0  │   0  │ │ Bonus
+│ ├───────┼──────┼──────┤ │
+│ │  [ ]  │ [18] │ [ ]  │ │ 3 Kind
+│ │  [25] │ [ ]  │ [20] │ │ F.House
+│ │  [ ]  │ [30] │ [ ]  │ │ Sm Str
+│ ├───────┼──────┼──────┤ │
+│ │  52   │  72  │  45  │ │ TOTAL
 └─────────────────────────┘
 ```
 
 **Features:**
-- Full scorecard view
-- Clear section divisions
-- Progress indicators
-- Total score prominently displayed
+- All players visible simultaneously
+- Player names as column headers
+- Compact row layout for categories
+- Current scores and empty slots clearly visible
+- Running totals at bottom
 
 ### 4. End Game Summary
 
@@ -180,6 +182,15 @@ This document outlines the user interface design requirements for the mobile Yah
 - Left-aligned text
 - Score on right side
 - Height: 44px minimum
+
+**Multi-Player Scorecard Table**
+- Header row with player names
+- Grid layout with equal column widths
+- Alternating row colors for readability
+- Compact cells (32px height minimum)
+- Scrollable horizontally if needed for many players
+- Current player highlighted with subtle border
+- Clickable cells for scoring (current player only)
 
 ### Color Palette
 

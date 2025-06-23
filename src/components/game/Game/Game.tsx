@@ -5,6 +5,7 @@ import { GameSetup } from '../GameSetup/GameSetup';
 import { GameBoard } from '../GameBoard/GameBoard';
 import { GameSummary } from '../GameSummary/GameSummary';
 import { Scorecard } from '../../scorecard/Scorecard/Scorecard';
+import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
 
 import './Game.css';
 
@@ -85,7 +86,7 @@ export const Game: React.FC = () => {
     );
   }
 
-  if (showScorecard && currentPlayer && currentScorecard) {
+  if (showScorecard) {
     return (
       <div className="game-scorecard-view">
         <div className="scorecard-header">
@@ -95,13 +96,14 @@ export const Game: React.FC = () => {
           >
             ← Back to Game
           </button>
-          <h2>Scorecard</h2>
+          <h2>All Scores</h2>
           <div className="scorecard-spacer" />
         </div>
-        <Scorecard
-          player={currentPlayer}
-          scorecard={currentScorecard}
+        <MultiPlayerScorecard
+          players={gameState.players}
+          scorecards={gameState.scorecards}
           currentDice={gameState.dice}
+          currentPlayerId={currentPlayer?.id || ''}
           onScoreSelect={handleScoreSelect}
           disabled={gameState.rollsRemaining > 0}
         />

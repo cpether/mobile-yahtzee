@@ -130,7 +130,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             className="btn btn-secondary btn-large"
             onClick={onShowScorecard}
           >
-            📊 Choose Score
+            📊 View All Scores
           </button>
         )}
       </div>
@@ -166,7 +166,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
               className="btn btn-link"
               onClick={onShowScorecard}
             >
-              View Full →
+              View All Scores →
             </button>
           </div>
           <Scorecard
