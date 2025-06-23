@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import type { GameRoom, OnlinePlayer } from '../../../types/online';
+import type { GameRoom } from '../../../types/online';
 import type { ScoreCategory } from '../../../types/game';
 import { socketService } from '../../../services/socketService';
 import { GameBoard } from '../../game/GameBoard/GameBoard';
@@ -20,7 +20,6 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
   const [gameState, setGameState] = useState(room.gameState);
   const [showScoring, setShowScoring] = useState(false);
   
-  const currentPlayer = room.players.find(p => p.id === currentPlayerId);
   const isCurrentPlayerTurn = gameState.players[gameState.currentPlayerIndex]?.id === currentPlayerId;
   const isGameFinished = gameState.gamePhase === 'finished';
 
