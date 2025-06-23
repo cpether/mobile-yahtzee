@@ -18,18 +18,18 @@
 .scorecard-header {
   display: grid;
   grid-template-columns: 160px repeat(var(--player-count, 3), 1fr);
-  background: var(--color-surface-variant);
+  background: var(--color-gray-800);
   padding: var(--spacing-3) var(--spacing-4);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
   border-bottom: 1px solid var(--color-gray-700);
   text-align: center;
-  color: var(--color-on-surface);
+  color: var(--color-white);
 }
 
 .scorecard-header:first-child {
   text-align: left;
-  color: var(--color-on-surface-variant);
+  color: var(--color-gray-300);
 }
 
 .scorecard-header.current-player {
@@ -42,9 +42,9 @@
   padding: var(--spacing-3) var(--spacing-2);
   font-weight: var(--font-weight-semibold);
   font-size: var(--font-size-sm);
-  color: var(--color-on-surface);
+  color: var(--color-white);
   text-align: center;
-  background: var(--color-surface-variant);
+  background: var(--color-gray-800);
   border-bottom: 1px solid var(--color-gray-700);
   position: relative;
 }
