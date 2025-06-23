@@ -413,17 +413,29 @@ io.on('connection', (socket) => {
       return;
     }
 
-    // Roll dice that aren't held
+    // First, set dice to rolling state for animation
     room.gameState.dice = room.gameState.dice.map(die => 
-      die.isHeld ? die : { ...die, value: Math.floor(Math.random() * 6) + 1, isRolling: false }
+      die.isHeld ? die : { ...die, isRolling: true }
     );
-    room.gameState.rollsRemaining--;
-    room.lastActivity = new Date();
-
-    io.to(roomCode).emit('dice-rolled', {
-      dice: room.gameState.dice,
-      rollsRemaining: room.gameState.rollsRemaining
+    
+    // Emit rolling start event
+    io.to(roomCode).emit('dice-rolling-started', {
+      dice: room.gameState.dice
     });
+
+    // After animation delay, roll dice and emit final result
+    setTimeout(() => {
+      room.gameState.dice = room.gameState.dice.map(die => 
+        die.isHeld ? die : { ...die, value: Math.floor(Math.random() * 6) + 1, isRolling: false }
+      );
+      room.gameState.rollsRemaining--;
+      room.lastActivity = new Date();
+
+      io.to(roomCode).emit('dice-rolled', {
+        dice: room.gameState.dice,
+        rollsRemaining: room.gameState.rollsRemaining
+      });
+    }, 1500); // 1.5 second animation
   });
 
   socket.on('hold-die', (data) => {

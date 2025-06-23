@@ -24,17 +24,17 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
   const isCurrentPlayerTurn = gameState.players[gameState.currentPlayerIndex]?.id === currentPlayerId;
   const isGameFinished = gameState.gamePhase === 'finished';
 
-  // Debug logging to see what's missing
-  console.log('OnlineGame Debug:', {
-    gameState,
-    currentPlayer: gameState.players[gameState.currentPlayerIndex],
-    scorecards: gameState.scorecards,
-    dice: gameState.dice,
-    rollsRemaining: gameState.rollsRemaining
-  });
+
 
   // Listen for game state updates from server
   useEffect(() => {
+    const handleDiceRollingStarted = (data: any) => {
+      setGameState(prevState => ({
+        ...prevState,
+        dice: data.dice
+      }));
+    };
+
     const handleDiceRolled = (data: any) => {
       setGameState(prevState => ({
         ...prevState,
@@ -66,12 +66,14 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
       setGameState(data.gameState);
     };
 
+    socketService.on('dice-rolling-started', handleDiceRollingStarted);
     socketService.on('dice-rolled', handleDiceRolled);
     socketService.on('die-held', handleDieHeld);
     socketService.on('turn-ended', handleTurnEnded);
     socketService.on('game-ended', handleGameEnded);
 
     return () => {
+      socketService.off('dice-rolling-started', handleDiceRollingStarted);
       socketService.off('dice-rolled', handleDiceRolled);
       socketService.off('die-held', handleDieHeld);
       socketService.off('turn-ended', handleTurnEnded);
@@ -141,18 +143,6 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
         onScoreSelect={handleScoreSelect}
         showScoring={showScoring || gameState.rollsRemaining === 0}
       />
-      
-      {/* Debug fallback */}
-      <div className="debug-info" style={{ marginTop: '20px', padding: '10px', border: '1px solid #ccc' }}>
-        <h4>Debug Info:</h4>
-        <p>Current Player Index: {gameState.currentPlayerIndex}</p>
-        <p>Current Player: {gameState.players[gameState.currentPlayerIndex]?.name || 'None'}</p>
-        <p>Current Player ID: {gameState.players[gameState.currentPlayerIndex]?.id || 'None'}</p>
-        <p>Scorecards Available: {Object.keys(gameState.scorecards || {}).length}</p>
-        <p>Scorecard Keys: {JSON.stringify(Object.keys(gameState.scorecards || {}))}</p>
-        <p>Players: {gameState.players.map(p => p.name).join(', ')}</p>
-        <p>Dice: {JSON.stringify(gameState.dice.map(d => d.value))}</p>
-      </div>
     </div>
   );
 }; 
