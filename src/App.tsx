@@ -4,6 +4,7 @@ import { Game } from './components/game/Game/Game';
 import { GameModeSelector } from './components/online/GameModeSelector/GameModeSelector';
 import { OnlineLobby } from './components/online/OnlineLobby/OnlineLobby';
 import { OnlineGameSetup } from './components/online/OnlineGameSetup/OnlineGameSetup';
+import { OnlineGame } from './components/online/OnlineGame/OnlineGame';
 import { socketService } from './services/socketService';
 import type { GameMode, GameRoom } from './types/online';
 import './App.css';
@@ -74,7 +75,15 @@ function App() {
         });
       });
 
-      socketService.on('game-started', () => {
+      socketService.on('game-started', (data: any) => {
+        setCurrentRoom(prevRoom => {
+          if (!prevRoom) return prevRoom;
+          return {
+            ...prevRoom,
+            gameState: data.gameState,
+            status: 'playing'
+          };
+        });
         setCurrentView('online-game');
       });
 
@@ -148,6 +157,10 @@ function App() {
     setCurrentPlayerId(null);
   };
 
+  const handleGameEnd = () => {
+    setCurrentView('online-lobby');
+  };
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'mode-select':
@@ -183,12 +196,16 @@ function App() {
           </GameProvider>
         );
 
-             case 'online-game':
-         return (
-           <GameProvider>
-             <Game />
-           </GameProvider>
-         );
+      case 'online-game':
+        return currentRoom && currentPlayerId ? (
+          <OnlineGame
+            room={currentRoom}
+            currentPlayerId={currentPlayerId}
+            onGameEnd={handleGameEnd}
+          />
+        ) : (
+          <div>Loading...</div>
+        );
 
       default:
         return <div>Unknown view</div>;

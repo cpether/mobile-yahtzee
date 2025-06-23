@@ -1,0 +1,109 @@
+.online-game {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  padding: var(--spacing-4);
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4);
+  padding: var(--spacing-4);
+  background: var(--color-background-light);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+}
+
+.game-header h2 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: var(--font-size-xl);
+}
+
+.room-code {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  background: var(--color-background);
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
+}
+
+.turn-indicator {
+  margin-bottom: var(--spacing-6);
+  text-align: center;
+}
+
+.your-turn {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+  color: white;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  box-shadow: var(--shadow-lg);
+  animation: pulse 2s infinite;
+}
+
+.waiting-turn {
+  background: var(--color-gray-100);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-3) var(--spacing-5);
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  border: 2px solid var(--color-gray-200);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .online-game {
+    padding: var(--spacing-2);
+  }
+  
+  .game-header {
+    flex-direction: column;
+    gap: var(--spacing-2);
+    text-align: center;
+  }
+  
+  .game-header h2 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .room-code {
+    font-size: var(--font-size-base);
+  }
+  
+  .your-turn {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3) var(--spacing-4);
+  }
+  
+  .waiting-turn {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-2) var(--spacing-4);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .waiting-turn {
+    background: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+} 
