@@ -39,14 +39,18 @@
 }
 
 .player-header {
-  padding: var(--spacing-3) var(--spacing-2);
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
+  padding: var(--spacing-4) var(--spacing-2);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
   color: var(--color-white);
   text-align: center;
   background: var(--color-gray-800);
   border-bottom: 1px solid var(--color-gray-700);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
 }
 
 .player-header:last-child {
@@ -157,14 +161,15 @@
 }
 
 .score-cell.scored {
-  background: var(--color-secondary-dark);
-  color: var(--color-white);
+  background: var(--color-secondary-dark) !important;
+  color: var(--color-white) !important;
   cursor: default;
   font-weight: var(--font-weight-semibold);
 }
 
 .score-cell.scored:hover {
-  background: var(--color-secondary-dark);
+  background: var(--color-secondary-dark) !important;
+  color: var(--color-white) !important;
 }
 
 .score-cell.available {
@@ -194,9 +199,17 @@
   color: inherit;
 }
 
+.score-cell.scored .score-value {
+  color: var(--color-white) !important;
+}
+
 .score-potential {
   color: inherit;
   font-weight: 600;
+}
+
+.score-cell.scored .score-potential {
+  color: var(--color-white) !important;
 }
 
 .score-empty {
@@ -289,6 +302,11 @@
   .total-cell.grand-total {
     font-size: 16px;
   }
+  
+  .player-header {
+    font-size: var(--font-size-base);
+    min-height: 55px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -321,8 +339,9 @@
   }
   
   .player-header {
-    font-size: 12px;
-    padding: 10px 4px;
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3) var(--spacing-1);
+    min-height: 50px;
   }
   
   .category-label-header {
