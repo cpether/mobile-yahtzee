@@ -57,17 +57,14 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     }
     
     case 'TOGGLE_DIE_HOLD': {
-      console.log('TOGGLE_DIE_HOLD reducer called:', { dieIndex: action.dieIndex, rollsRemaining: state.rollsRemaining, currentDice: state.dice });
-      if (state.rollsRemaining === 3) {
-        console.log('Toggle die hold blocked in reducer - no rolls taken yet');
-        return state; // Can't hold before first roll
+      // Can only hold dice after at least one roll has been made
+      if (state.rollsRemaining === 3 || state.gamePhase !== 'playing') {
+        return state;
       }
       
-      const newDice = toggleDieHoldUtil(state.dice, action.dieIndex);
-      console.log('New dice state after toggle:', newDice);
       return {
         ...state,
-        dice: newDice
+        dice: toggleDieHoldUtil(state.dice, action.dieIndex)
       };
     }
     
@@ -123,15 +120,12 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   }, [gameState.rollsRemaining]);
   
   const toggleDieHoldAction = useCallback((dieIndex: number) => {
-    console.log('toggleDieHoldAction called:', { dieIndex, rollsRemaining: gameState.rollsRemaining });
-    if (gameState.rollsRemaining < 3) { // Can only hold after first roll
-      console.log('Dispatching TOGGLE_DIE_HOLD action');
+    // Only allow holding dice after at least one roll has been made
+    if (gameState.rollsRemaining < 3 && gameState.gamePhase === 'playing') {
       triggerDieHoldHaptic();
       dispatch({ type: 'TOGGLE_DIE_HOLD', dieIndex });
-    } else {
-      console.log('Toggle die hold blocked - no rolls taken yet');
     }
-  }, [gameState.rollsRemaining]);
+  }, [gameState.rollsRemaining, gameState.gamePhase]);
   
   const scoreCategory = useCallback((category: ScoreCategory) => {
     dispatch({ type: 'SCORE_CATEGORY', category, playerId: getCurrentPlayer(gameState)?.id || '' });
