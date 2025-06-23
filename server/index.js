@@ -2,7 +2,6 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-import { createClient } from 'redis';
 import { nanoid } from 'nanoid';
 
 const app = express();
@@ -14,13 +13,9 @@ const io = new Server(server, {
   }
 });
 
-// Redis client setup
-const redis = createClient({
-  url: process.env.REDIS_URL || 'redis://localhost:6379'
-});
-
-redis.on('error', (err) => console.log('Redis Client Error', err));
-await redis.connect();
+// For development: using in-memory storage instead of Redis
+// In production, you'd want to use Redis for persistence and scaling
+console.log('Using in-memory storage for game rooms (development mode)');
 
 app.use(cors());
 app.use(express.json());
