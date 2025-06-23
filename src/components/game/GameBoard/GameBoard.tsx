@@ -2,6 +2,7 @@ import React from 'react';
 import type { GameState, ScoreCategory } from '../../../types/game';
 import { Die } from '../../dice/Die/Die';
 import { Scorecard } from '../../scorecard/Scorecard/Scorecard';
+import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
 import { calculateScore, canScoreCategory } from '../../../utils/scoring';
 import './GameBoard.css';
 
@@ -9,7 +10,6 @@ interface GameBoardProps {
   gameState: GameState;
   onRollDice: () => void;
   onToggleDieHold: (dieIndex: number) => void;
-  onShowScorecard: () => void;
   onScoreSelect: (category: ScoreCategory) => void;
   showScoring: boolean;
 }
@@ -18,7 +18,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   gameState,
   onRollDice,
   onToggleDieHold,
-  onShowScorecard,
   onScoreSelect,
   showScoring
 }) => {
@@ -126,12 +125,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         )}
         
         {!canRoll && (
-          <button
-            className="btn btn-secondary btn-large"
-            onClick={onShowScorecard}
-          >
-            📊 Choose Score
-          </button>
+          <div className="score-reminder">
+            Choose a category to score your roll
+          </div>
         )}
       </div>
 
@@ -157,28 +153,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         </div>
       )}
 
-      {/* Compact Scorecard Preview */}
-      {!showScoring && (
-        <div className="game-board__scorecard-preview">
-          <div className="scorecard-preview-header">
-            <h3>Scorecard Preview</h3>
-            <button 
-              className="btn btn-link"
-              onClick={onShowScorecard}
-            >
-              View Full →
-            </button>
-          </div>
-          <Scorecard
-            player={currentPlayer}
-            scorecard={currentScorecard}
-            currentDice={gameState.dice}
-            onScoreSelect={onScoreSelect}
-            disabled={canRoll}
-            compact={true}
-          />
-        </div>
-      )}
+      {/* Multi-Player Scorecard */}
+      <div className="game-board__scorecard">
+        <MultiPlayerScorecard
+          players={gameState.players}
+          scorecards={gameState.scorecards}
+          currentDice={gameState.dice}
+          currentPlayerId={currentPlayer.id}
+          onScoreSelect={onScoreSelect}
+          disabled={canRoll}
+        />
+      </div>
     </div>
   );
 }; 

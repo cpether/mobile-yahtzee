@@ -71,12 +71,14 @@ This document outlines the user interface design requirements for the mobile Yah
 │ └─────────────────┘     │
 │ Rolls Left: 2           │
 │                         │
-│ ┌─────────────────┐     │  <- Scorecard
-│ │   SCORECARD     │     │
-│ │ Ones:    [3]    │     │
-│ │ Twos:    [ ]    │     │
-│ │ Threes:  [9]    │     │
-│ └─────────────────┘     │
+│ ┌─────────────────────┐ │  <- All Players Scorecard
+│ │Sarah│Mike │Lisa │   │ │
+│ ├─────┼─────┼─────┤   │ │
+│ │ [3] │ [2] │ [ ] │1s │ │
+│ │ [ ] │ [4] │ [2] │2s │ │
+│ │ [9] │ [ ] │ [6] │3s │ │
+│ │ 52  │ 72  │ 45  │TOT│ │
+│ └─────────────────────┘ │
 └─────────────────────────┘
 ```
 
@@ -85,40 +87,9 @@ This document outlines the user interface design requirements for the mobile Yah
 - **Dice Display**: Visual dice with hold/keep states
 - **Roll Button**: Primary action button
 - **Roll Counter**: Shows remaining rolls
-- **Scorecard**: Compact, scrollable scoring area
+- **Multi-Player Scorecard**: Always visible table showing all players' scores with current player highlighted
 
-### 3. Scorecard Detail View
-
-```
-┌─────────────────────────┐
-│ ← Back   SCORECARD      │
-├─────────────────────────┤
-│ UPPER SECTION           │
-│ ┌─ Ones      [3]  ──┐   │
-│ ├─ Twos      [ ]  ──┤   │
-│ ├─ Threes    [9]  ──┤   │
-│ ├─ Fours     [ ]  ──┤   │
-│ ├─ Fives     [15] ──┤   │
-│ └─ Sixes     [ ]  ──┘   │
-│ Bonus: 35 (Need 63)     │
-│                         │
-│ LOWER SECTION           │
-│ ┌─ 3 of Kind  [ ] ──┐   │
-│ ├─ 4 of Kind  [ ] ──┤   │
-│ ├─ Full House [25]──┤   │
-│ └─ Small Str  [ ] ──┘   │
-│                         │
-│ TOTAL: 52               │
-└─────────────────────────┘
-```
-
-**Features:**
-- Full scorecard view
-- Clear section divisions
-- Progress indicators
-- Total score prominently displayed
-
-### 4. End Game Summary
+### 3. End Game Summary
 
 ```
 ┌─────────────────────────┐
@@ -180,6 +151,15 @@ This document outlines the user interface design requirements for the mobile Yah
 - Left-aligned text
 - Score on right side
 - Height: 44px minimum
+
+**Multi-Player Scorecard Table**
+- Header row with player names
+- Grid layout with equal column widths
+- Alternating row colors for readability
+- Compact cells (32px height minimum)
+- Scrollable horizontally if needed for many players
+- Current player highlighted with subtle border
+- Clickable cells for scoring (current player only)
 
 ### Color Palette
 

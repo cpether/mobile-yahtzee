@@ -5,6 +5,7 @@ import { GameSetup } from '../GameSetup/GameSetup';
 import { GameBoard } from '../GameBoard/GameBoard';
 import { GameSummary } from '../GameSummary/GameSummary';
 import { Scorecard } from '../../scorecard/Scorecard/Scorecard';
+import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
 
 import './Game.css';
 
@@ -13,7 +14,6 @@ type GameView = 'setup' | 'playing' | 'scoring' | 'summary';
 export const Game: React.FC = () => {
   const { gameState, startNewGame, rollDice, toggleDieHold, scoreCategory } = useGameState();
   const [currentView, setCurrentView] = useState<GameView>('setup');
-  const [showScorecard, setShowScorecard] = useState(false);
 
   const handleStartGame = useCallback((players: Player[]) => {
     startNewGame(players);
@@ -40,24 +40,14 @@ export const Game: React.FC = () => {
     } else {
       setCurrentView('playing');
     }
-    setShowScorecard(false);
   }, [gameState.dice, gameState.players, gameState.currentPlayerIndex, gameState.gamePhase, scoreCategory]);
 
   const handleNewGame = useCallback(() => {
     setCurrentView('setup');
-    setShowScorecard(false);
   }, []);
 
   const handleViewScorecards = useCallback(() => {
-    setShowScorecard(true);
-  }, []);
-
-  const handleBackToGame = useCallback(() => {
-    setShowScorecard(false);
-  }, []);
-
-  const handleShowScorecard = useCallback(() => {
-    setShowScorecard(true);
+    // This will show the multi-player scorecard in GameSummary
   }, []);
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
@@ -85,29 +75,7 @@ export const Game: React.FC = () => {
     );
   }
 
-  if (showScorecard && currentPlayer && currentScorecard) {
-    return (
-      <div className="game-scorecard-view">
-        <div className="scorecard-header">
-          <button 
-            className="btn btn-secondary"
-            onClick={handleBackToGame}
-          >
-            ← Back to Game
-          </button>
-          <h2>Scorecard</h2>
-          <div className="scorecard-spacer" />
-        </div>
-        <Scorecard
-          player={currentPlayer}
-          scorecard={currentScorecard}
-          currentDice={gameState.dice}
-          onScoreSelect={handleScoreSelect}
-          disabled={gameState.rollsRemaining > 0}
-        />
-      </div>
-    );
-  }
+
 
   if (currentView === 'playing' || currentView === 'scoring') {
     return (
@@ -115,7 +83,6 @@ export const Game: React.FC = () => {
         gameState={gameState}
         onRollDice={handleRollDice}
         onToggleDieHold={toggleDieHold}
-        onShowScorecard={handleShowScorecard}
         onScoreSelect={handleScoreSelect}
         showScoring={currentView === 'scoring'}
       />

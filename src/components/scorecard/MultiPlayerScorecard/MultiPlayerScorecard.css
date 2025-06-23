@@ -1,0 +1,383 @@
+.multi-player-scorecard {
+  width: 100%;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-gray-700);
+  margin: var(--spacing-4) 0;
+}
+
+.scorecard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* Header Row */
+.scorecard-header {
+  display: grid;
+  grid-template-columns: 160px repeat(var(--player-count, 3), 1fr);
+  background: var(--color-gray-800);
+  border-bottom: 1px solid var(--color-gray-700);
+}
+
+.category-label-header {
+  padding: var(--spacing-4) var(--spacing-4);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-300);
+  text-align: left;
+  background: var(--color-gray-800);
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+}
+
+
+
+.player-header {
+  padding: 0;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  color: var(--color-white);
+  text-align: center;
+  background: var(--color-gray-800);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+  width: 100%;
+  height: 100%;
+}
+
+.player-header:last-child {
+  border-right: none;
+}
+
+.player-header.current-player {
+  background: var(--color-gray-700);
+  color: var(--color-white);
+  border-left: 3px solid var(--color-primary);
+}
+
+.player-header.current-player::after {
+  content: '●';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 8px;
+  color: var(--color-secondary);
+}
+
+/* Section Titles */
+.section-title {
+  grid-column: 1 / -1;
+  padding: var(--spacing-3) var(--spacing-4);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-xs);
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-gray-800);
+  border-bottom: 1px solid var(--color-gray-700);
+  border-top: 2px solid var(--color-gray-600);
+}
+
+/* Scorecard Rows */
+.scorecard-row {
+  display: grid;
+  grid-template-columns: 160px repeat(var(--player-count, 3), 1fr);
+  border-bottom: 1px solid var(--color-gray-800);
+  background: var(--color-surface);
+}
+
+.scorecard-row:hover {
+  background: var(--color-gray-800);
+}
+
+.scorecard-row:last-child {
+  border-bottom: none;
+}
+
+.score-category {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-800);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-on-surface-variant);
+  background: var(--color-surface);
+}
+
+.score-category.section-header {
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-top: 2px solid var(--color-gray-600);
+}
+
+.score-category.total-row {
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  border-top: 2px solid var(--color-gray-600);
+}
+
+.score-category.grand-total-row {
+  background: var(--color-gray-700);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+  border-top: 3px solid var(--color-primary);
+}
+
+/* Score Cells */
+.score-cell {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-800);
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  transition: all var(--transition-fast);
+}
+
+.score-cell:last-child {
+  border-right: none;
+}
+
+.score-cell:hover {
+  background: var(--color-gray-800);
+}
+
+.score-cell.scored {
+  background: var(--color-secondary-dark) !important;
+  color: var(--color-white) !important;
+  cursor: default;
+  font-weight: var(--font-weight-semibold);
+}
+
+.score-cell.scored:hover {
+  background: var(--color-secondary-dark) !important;
+  color: var(--color-white) !important;
+}
+
+.score-cell.available {
+  background: var(--color-gray-800);
+  color: var(--color-primary);
+  cursor: pointer;
+  border: 1px solid var(--color-primary);
+  border-left: 3px solid var(--color-primary);
+}
+
+.score-cell.available:hover {
+  background: var(--color-gray-700);
+  color: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.score-cell.current-player:not(.available):not(.scored) {
+  border-left: 3px solid var(--color-primary);
+}
+
+.score-cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.score-value {
+  color: inherit;
+}
+
+.score-cell.scored .score-value {
+  color: var(--color-white) !important;
+}
+
+.score-potential {
+  color: inherit;
+  font-weight: 600;
+}
+
+.score-cell.scored .score-potential {
+  color: var(--color-white) !important;
+}
+
+.score-empty {
+  color: var(--color-gray-400);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Total Cells */
+.total-cell {
+  background: var(--color-gray-800);
+  border-bottom: 1px solid var(--color-gray-700);
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+  min-height: 48px;
+}
+
+.total-cell:last-child {
+  border-right: none;
+}
+
+.total-cell.grand-total {
+  background: var(--color-gray-700);
+  color: var(--color-white);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  border-top: 3px solid var(--color-primary);
+}
+
+/* Total Rows */
+.total-row {
+  background: var(--color-gray-800);
+}
+
+.total-row .category-label {
+  background: var(--color-gray-800);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+}
+
+.grand-total-row {
+  background: var(--color-gray-700);
+  border-top: 3px solid var(--color-primary);
+}
+
+.grand-total-row .category-label {
+  background: var(--color-gray-700);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+}
+
+.grand-total-section {
+  border-top: 3px solid var(--color-primary);
+}
+
+/* Hint */
+.scorecard-hint {
+  padding: var(--spacing-4);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-on-surface-variant);
+  background: var(--color-surface-variant);
+  border-top: 1px solid var(--color-gray-700);
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .scorecard-header,
+  .scorecard-row {
+    grid-template-columns: 120px repeat(var(--player-count, 3), 1fr);
+  }
+  
+  .scorecard-header,
+  .score-category,
+  .score-cell {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-sm);
+  }
+  
+  .score-cell {
+    min-height: 40px;
+  }
+  
+  .total-cell.grand-total {
+    font-size: 16px;
+  }
+  
+  .player-header {
+    font-size: var(--font-size-base);
+    min-height: 55px;
+  }
+}
+
+@media (max-width: 480px) {
+  .multi-player-scorecard {
+    margin: 0 -16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .scorecard-header,
+  .scorecard-row {
+    grid-template-columns: 100px repeat(var(--player-count, 3), 1fr);
+  }
+  
+  .scorecard-header,
+  .score-category,
+  .score-cell {
+    padding: var(--spacing-2);
+    font-size: var(--font-size-xs);
+  }
+  
+  .score-cell {
+    min-height: 36px;
+  }
+  
+  .score-cell.total,
+  .score-cell.grand-total {
+    font-size: var(--font-size-sm);
+  }
+  
+  .player-header {
+    font-size: var(--font-size-base);
+    padding: var(--spacing-3) var(--spacing-1);
+    min-height: 50px;
+  }
+  
+  .category-label-header {
+    padding: 10px 6px;
+    font-size: 11px;
+  }
+  
+  .total-cell.grand-total {
+    font-size: 15px;
+  }
+}
+
+/* Animation for score updates */
+@keyframes scoreUpdate {
+  0% { 
+    background-color: var(--color-secondary);
+    transform: scale(1);
+  }
+  50% { 
+    background-color: var(--color-secondary-light);
+    transform: scale(1.05);
+  }
+  100% { 
+    background-color: var(--color-secondary-light);
+    transform: scale(1);
+  }
+}
+
+.score-cell.score-updated {
+  animation: scoreUpdate 0.6s ease-in-out;
+}
+
+/* Horizontal scroll for many players */
+@media (min-width: 769px) {
+  .multi-player-scorecard {
+    overflow-x: auto;
+  }
+}
+
+/* Remove unnecessary light color */ 
