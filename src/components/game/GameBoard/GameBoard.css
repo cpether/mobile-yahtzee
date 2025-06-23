@@ -202,11 +202,23 @@
   color: var(--color-primary);
 }
 
-.game-board__scorecard-preview {
+.game-board__scorecard {
   background-color: var(--color-white);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  margin-top: var(--spacing-4);
+}
+
+.score-reminder {
+  padding: var(--spacing-3);
+  background-color: var(--color-warning-light);
+  border: 2px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-warning-dark);
 }
 
 .scorecard-preview-header {

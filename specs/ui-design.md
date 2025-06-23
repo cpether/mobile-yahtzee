@@ -71,12 +71,14 @@ This document outlines the user interface design requirements for the mobile Yah
 │ └─────────────────┘     │
 │ Rolls Left: 2           │
 │                         │
-│ ┌─────────────────┐     │  <- Scorecard
-│ │   SCORECARD     │     │
-│ │ Ones:    [3]    │     │
-│ │ Twos:    [ ]    │     │
-│ │ Threes:  [9]    │     │
-│ └─────────────────┘     │
+│ ┌─────────────────────┐ │  <- All Players Scorecard
+│ │Sarah│Mike │Lisa │   │ │
+│ ├─────┼─────┼─────┤   │ │
+│ │ [3] │ [2] │ [ ] │1s │ │
+│ │ [ ] │ [4] │ [2] │2s │ │
+│ │ [9] │ [ ] │ [6] │3s │ │
+│ │ 52  │ 72  │ 45  │TOT│ │
+│ └─────────────────────┘ │
 └─────────────────────────┘
 ```
 
@@ -85,42 +87,9 @@ This document outlines the user interface design requirements for the mobile Yah
 - **Dice Display**: Visual dice with hold/keep states
 - **Roll Button**: Primary action button
 - **Roll Counter**: Shows remaining rolls
-- **Scorecard**: Compact, scrollable scoring area
+- **Multi-Player Scorecard**: Always visible table showing all players' scores with current player highlighted
 
-### 3. Scorecard Detail View (Multi-Player)
-
-```
-┌─────────────────────────┐
-│ ← Back   ALL SCORES     │
-├─────────────────────────┤
-│ │ Sarah │ Mike │ Lisa │ │
-│ ├───────┼──────┼──────┤ │
-│ │  [3]  │ [2]  │ [ ]  │ │ Ones
-│ │  [ ]  │ [4]  │ [2]  │ │ Twos  
-│ │  [9]  │ [ ]  │ [6]  │ │ Threes
-│ │  [ ]  │ [8]  │ [ ]  │ │ Fours
-│ │ [15]  │ [10] │ [5]  │ │ Fives
-│ │  [ ]  │ [ ]  │ [12] │ │ Sixes
-│ ├───────┼──────┼──────┤ │
-│ │  27   │  24  │  25  │ │ Upper
-│ │   0   │   0  │   0  │ │ Bonus
-│ ├───────┼──────┼──────┤ │
-│ │  [ ]  │ [18] │ [ ]  │ │ 3 Kind
-│ │  [25] │ [ ]  │ [20] │ │ F.House
-│ │  [ ]  │ [30] │ [ ]  │ │ Sm Str
-│ ├───────┼──────┼──────┤ │
-│ │  52   │  72  │  45  │ │ TOTAL
-└─────────────────────────┘
-```
-
-**Features:**
-- All players visible simultaneously
-- Player names as column headers
-- Compact row layout for categories
-- Current scores and empty slots clearly visible
-- Running totals at bottom
-
-### 4. End Game Summary
+### 3. End Game Summary
 
 ```
 ┌─────────────────────────┐
