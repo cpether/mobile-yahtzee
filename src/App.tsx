@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { GameProvider } from './contexts/GameContext';
+import { Die } from './components/dice/Die/Die';
+import './styles/globals.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <GameProvider>
+      <div className="game-container">
+        <div className="container">
+          <header className="text-center py-4">
+            <h1>Mobile Yahtzee</h1>
+            <p className="text-muted">Pass-and-play dice game</p>
+          </header>
+          
+          <main>
+            <div className="flex flex-col items-center gap-6">
+              <div className="dice-container">
+                <Die 
+                  value={1} 
+                  isHeld={false} 
+                  isRolling={false} 
+                  onToggleHold={() => console.log('Die clicked')}
+                />
+                <Die 
+                  value={2} 
+                  isHeld={true} 
+                  isRolling={false} 
+                  onToggleHold={() => console.log('Die clicked')}
+                />
+                <Die 
+                  value={3} 
+                  isHeld={false} 
+                  isRolling={false} 
+                  onToggleHold={() => console.log('Die clicked')}
+                />
+                <Die 
+                  value={4} 
+                  isHeld={false} 
+                  isRolling={false} 
+                  onToggleHold={() => console.log('Die clicked')}
+                />
+                <Die 
+                  value={5} 
+                  isHeld={false} 
+                  isRolling={false} 
+                  onToggleHold={() => console.log('Die clicked')}
+                />
+              </div>
+              
+              <div className="flex gap-4">
+                <button className="btn btn-primary btn-large">
+                  Roll Dice
+                </button>
+                <button className="btn btn-outline">
+                  Score
+                </button>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-muted">
+                  Tap dice to hold them, then roll again!
+                </p>
+                <p className="text-xs text-muted mt-4">
+                  Rolls remaining: 3
+                </p>
+              </div>
+            </div>
+          </main>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </GameProvider>
+  );
 }
 
-export default App
+export default App;
