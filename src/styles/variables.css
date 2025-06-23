@@ -36,9 +36,9 @@
   --color-on-surface-variant: var(--color-gray-700);
   
   /* Dice colors */
-  --color-die-face: var(--color-white);
+  --color-die-face: var(--color-surface);
   --color-die-border: var(--color-gray-300);
-  --color-die-dots: var(--color-gray-900);
+  --color-die-dots: var(--color-on-surface);
   --color-die-held: var(--color-primary-light);
   --color-die-held-border: var(--color-primary);
   --color-die-shadow: rgba(0, 0, 0, 0.1);
@@ -155,9 +155,9 @@
     --color-on-surface: var(--color-white);
     --color-on-surface-variant: var(--color-gray-300);
     
-    --color-die-face: var(--color-gray-800);
+    --color-die-face: var(--color-surface);
     --color-die-border: var(--color-gray-600);
-    --color-die-dots: var(--color-white);
+    --color-die-dots: var(--color-on-surface);
     
     --color-scorecard-header: var(--color-gray-800);
     --color-scorecard-row: var(--color-gray-900);
