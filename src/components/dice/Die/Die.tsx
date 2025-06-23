@@ -19,8 +19,12 @@ export const Die: React.FC<DieProps> = ({
   animationDelay = 0
 }) => {
   const handleClick = () => {
+    console.log('Die clicked:', { disabled, isRolling, value, isHeld });
     if (!disabled && !isRolling) {
+      console.log('Calling onToggleHold');
       onToggleHold();
+    } else {
+      console.log('Click ignored due to disabled or rolling state');
     }
   };
 
