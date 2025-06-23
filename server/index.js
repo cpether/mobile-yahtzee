@@ -435,7 +435,7 @@ io.on('connection', (socket) => {
         dice: room.gameState.dice,
         rollsRemaining: room.gameState.rollsRemaining
       });
-    }, 1500); // 1.5 second animation
+    }, 1000); // 1 second animation to match CSS
   });
 
   socket.on('hold-die', (data) => {
@@ -501,7 +501,7 @@ io.on('connection', (socket) => {
     // Move to next turn
     room.gameState.currentPlayerIndex = (room.gameState.currentPlayerIndex + 1) % room.gameState.players.length;
     room.gameState.rollsRemaining = 3;
-    room.gameState.dice = room.gameState.dice.map(die => ({ ...die, isHeld: false }));
+    room.gameState.dice = room.gameState.dice.map(die => ({ ...die, isHeld: false, isRolling: false }));
     
     // Update current player
     room.gameState.players.forEach((player, index) => {
