@@ -210,6 +210,14 @@ class GameRoom {
     
     this.lastActivity = new Date();
     
+    // Update room status after adding a player
+    // If all players are ready, status should be 'ready', otherwise 'waiting'
+    if (this.players.length >= 2 && this.players.every(p => p.isReady)) {
+      this.status = 'ready';
+    } else {
+      this.status = 'waiting';
+    }
+    
     return player;
   }
 
@@ -237,6 +245,8 @@ class GameRoom {
     }
     
     // Check if all players are ready
+    // Note: 'ready' status means the host can start the game,
+    // but new players can still join until the game is officially started
     if (this.players.length >= 2 && this.players.every(p => p.isReady)) {
       this.status = 'ready';
     } else {
@@ -343,7 +353,9 @@ io.on('connection', (socket) => {
       return;
     }
 
-    if (room.status !== 'waiting') {
+    // Allow joining if room status is either 'waiting' or 'ready'
+    // Only prevent joining if the game is actually in progress or finished
+    if (room.status !== 'waiting' && room.status !== 'ready') {
       socket.emit('room-error', { message: 'Game has already started' });
       return;
     }
