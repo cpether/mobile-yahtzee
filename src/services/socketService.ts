@@ -35,12 +35,16 @@ class SocketService {
   constructor() {
     // Environment-aware server URL configuration
     const isDevelopment = import.meta.env.DEV;
-    const productionUrl = import.meta.env.VITE_API_URL;
-    const developmentUrl = 'http://localhost:3001';
     
-    this.serverUrl = isDevelopment ? developmentUrl : (productionUrl || developmentUrl);
+    if (isDevelopment) {
+      // Development: connect to separate backend server
+      this.serverUrl = 'http://localhost:3001';
+    } else {
+      // Production: same domain, server serves both frontend and WebSocket
+      this.serverUrl = window.location.origin;
+    }
     
-    console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${import.meta.env.VITE_APP_ENVIRONMENT || 'development'})`);
+    console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${isDevelopment ? 'development' : 'production'})`);
   }
 
   // Connection management
