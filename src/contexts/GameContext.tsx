@@ -15,7 +15,8 @@ import {
   toggleDieHold as toggleDieHoldUtil, 
   resetDiceHolds, 
   triggerDiceRollHaptic,
-  triggerDieHoldHaptic
+  triggerDieHoldHaptic,
+  setDiceRolling
 } from '../utils/diceUtils';
 import { calculateScore } from '../utils/scoring';
 interface GameContextType {
@@ -46,12 +47,19 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
     case 'ROLL_DICE': {
       if (state.rollsRemaining <= 0) return state;
       
-      const newDice = rollUnheldDice(state.dice);
-      
+      // Just set dice to rolling state, without changing values yet
       return {
         ...state,
-        dice: newDice,
+        dice: setDiceRolling(state.dice, true),
         rollsRemaining: state.rollsRemaining - 1
+      };
+    }
+    
+    case 'UPDATE_DICE_VALUES': {
+      // This action updates the dice values after animation
+      return {
+        ...state,
+        dice: action.dice
       };
     }
     
@@ -121,16 +129,28 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const rollDice = useCallback(() => {
     if (gameState.rollsRemaining > 0) {
       triggerDiceRollHaptic();
+      
+      // First, set dice to rolling state without changing values
       dispatch({ type: 'ROLL_DICE' });
       
-      // Clear rolling state after animation completes
-      // CSS animation duration is 800ms (200ms for reduced motion)
+      // Get animation duration
       const animationDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 200 : 800;
+      
+      // Generate new dice values but wait until animation is almost complete
       setTimeout(() => {
-        dispatch({ type: 'CLEAR_DICE_ROLLING' });
-      }, animationDuration + 100); // Add small buffer
+        // Generate new dice values
+        const newDice = rollUnheldDice(gameState.dice);
+        
+        // Update dice values
+        dispatch({ type: 'UPDATE_DICE_VALUES', dice: newDice });
+        
+        // Clear rolling state shortly after
+        setTimeout(() => {
+          dispatch({ type: 'CLEAR_DICE_ROLLING' });
+        }, 100); // Short delay after values update
+      }, animationDuration * 0.8); // Update values at 80% through the animation
     }
-  }, [gameState.rollsRemaining]);
+  }, [gameState.rollsRemaining, gameState.dice]);
   
   const toggleDieHoldAction = useCallback((dieIndex: number) => {
     // Only allow holding dice after at least one roll has been made

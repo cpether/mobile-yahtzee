@@ -42,7 +42,8 @@ export type GameAction =
   | { type: 'TOGGLE_DIE_HOLD'; dieIndex: number }
   | { type: 'SCORE_CATEGORY'; category: ScoreCategory; playerId: string }
   | { type: 'NEXT_TURN' }
-  | { type: 'END_GAME' };
+  | { type: 'END_GAME' }
+  | { type: 'UPDATE_DICE_VALUES'; dice: DiceState[] };
 
 export interface GameSettings {
   playerCount: number;
