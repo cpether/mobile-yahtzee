@@ -240,7 +240,6 @@ class GameRoom {
   setPlayerReady(socketId, isReady) {
     const player = this.players.find(p => p.socketId === socketId);
     if (player) {
-      console.log(`Player ${player.name} (${socketId}) setting ready status to ${isReady}`);
       player.isReady = isReady;
       this.lastActivity = new Date();
     }
@@ -249,31 +248,23 @@ class GameRoom {
     // Note: 'ready' status means the host can start the game,
     // but new players can still join until the game is officially started
     const allReady = this.players.length >= 2 && this.players.every(p => p.isReady);
-    const oldStatus = this.status;
     
     if (allReady) {
       this.status = 'ready';
     } else {
       this.status = 'waiting';
     }
-
-    console.log(`Room ${this.code} status changed from ${oldStatus} to ${this.status}. ${this.players.length} players, all ready: ${allReady}`);
-    console.log(`Players ready status: ${this.players.map(p => `${p.name}: ${p.isReady}`).join(', ')}`);
   }
 
   startGame() {
-    console.log(`Attempting to start game in room ${this.code} with status ${this.status}`);
     if (this.status === 'ready') {
-      console.log(`Starting game in room ${this.code}`);
       this.status = 'playing';
       this.gameState.gamePhase = 'playing';
       this.gameState.currentPlayerIndex = 0;
       this.gameState.players[0].isCurrentPlayer = true;
       this.lastActivity = new Date();
-      console.log(`Game started successfully in room ${this.code}, status now: ${this.status}`);
       return true;
     }
-    console.log(`Failed to start game in room ${this.code}, status: ${this.status}`);
     return false;
   }
 
@@ -325,8 +316,6 @@ io.on('connection', (socket) => {
   socket.on('create-room', (data) => {
     const { playerName } = data;
     
-    console.log(`Create room attempt by player: ${playerName}`);
-    
     if (!playerName || playerName.trim().length === 0) {
       socket.emit('room-error', { message: 'Player name is required' });
       return;
@@ -342,14 +331,12 @@ io.on('connection', (socket) => {
       playerId: socket.id
     });
     
-    console.log(`Room created: ${room.code} by ${playerName} (${socket.id}), status: ${room.status}`);
+    console.log(`Room created: ${room.code} by ${playerName}`);
   });
 
   // Join an existing room
   socket.on('join-room', (data) => {
     const { code, playerName } = data;
-    
-    console.log(`Join attempt for room ${code} by ${playerName}`);
     
     if (!code || !playerName || playerName.trim().length === 0) {
       socket.emit('room-error', { message: 'Room code and player name are required' });
@@ -359,15 +346,11 @@ io.on('connection', (socket) => {
     const room = rooms.get(code.toUpperCase());
     
     if (!room) {
-      console.log(`Room not found: ${code}`);
       socket.emit('room-error', { message: 'Room not found' });
       return;
     }
 
-    console.log(`Room status for ${code}: ${room.status}, players: ${room.players.length}`);
-    
     if (room.players.length >= room.settings.maxPlayers) {
-      console.log(`Room ${code} is full (${room.players.length}/${room.settings.maxPlayers})`);
       socket.emit('room-error', { message: 'Room is full' });
       return;
     }
@@ -375,11 +358,8 @@ io.on('connection', (socket) => {
     // Allow joining if room status is either 'waiting' or 'ready'
     // Only prevent joining if the game is actually in progress or finished
     if (room.status === 'playing' || room.status === 'finished') {
-      console.log(`Room ${code} has incorrect status: ${room.status}`);
       socket.emit('room-error', { message: 'Game has already started' });
       return;
-    } else {
-      console.log(`Room ${code} has valid status for joining: ${room.status}`);
     }
 
     // Check for duplicate names
@@ -428,29 +408,22 @@ io.on('connection', (socket) => {
     const { roomCode } = data;
     const room = rooms.get(roomCode);
     
-    console.log(`Start game attempt for room ${roomCode} by ${socket.id}`);
-    
     if (!room) {
-      console.log(`Room not found: ${roomCode}`);
       socket.emit('room-error', { message: 'Room not found' });
       return;
     }
 
     if (socket.id !== room.hostId) {
-      console.log(`Non-host tried to start game: ${socket.id}, host is: ${room.hostId}`);
       socket.emit('room-error', { message: 'Only the host can start the game' });
       return;
     }
 
-    console.log(`Valid start game attempt by host in room ${roomCode}, current status: ${room.status}`);
-    
     if (room.startGame()) {
       io.to(roomCode).emit('game-started', {
         gameState: room.gameState
       });
-      console.log(`Game started in room ${roomCode}, new status: ${room.status}`);
+      console.log(`Game started in room ${roomCode}`);
     } else {
-      console.log(`Failed to start game in room ${roomCode}, status: ${room.status}`);
       socket.emit('room-error', { message: 'Cannot start game - not all players ready' });
     }
   });
