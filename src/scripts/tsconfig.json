@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/scripts",
-    "module": "CommonJS",
+    "module": "ESNext",
     "moduleResolution": "node",
     "target": "ES2020",
     "esModuleInterop": true,

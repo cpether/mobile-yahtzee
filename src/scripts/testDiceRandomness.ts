@@ -4,12 +4,12 @@
  * This script tests the randomness of the game's dice implementation
  * using statistical methods like the chi-square test.
  */
-import { rollDie } from '../utils/diceUtils';
+import { rollDie } from '../utils/diceUtils.js';
 import { 
   testDiceDistribution, 
   runMultipleTests, 
   generateTestReport 
-} from '../utils/diceTestingUtils';
+} from '../utils/diceTestingUtils.js';
 
 /**
  * Main function to run the test

@@ -15,7 +15,7 @@
     "start:production": "npm run build && npm run server:install && npm run server:start",
     "server:install": "cd server && npm install",
     "server:start": "cd server && npm start",
-    "test:dice": "tsc -p src/scripts/tsconfig.json && node dist/scripts/testDiceRandomness.js",
+    "test:dice": "npx tsc -p src/scripts/tsconfig.json && node dist/scripts/scripts/testDiceRandomness.js",
     "test:dice:compare": "node tests/dice-randomness/compare-implementations.mjs",
     "test:dice:game": "node tests/dice-randomness/test-game-dice.mjs"
   },
