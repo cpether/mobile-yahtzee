@@ -7,7 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "deploy:railway": "railway up",
+    "start:production": "npm run build && npm run server:install && npm run server:start",
+    "server:install": "cd server && npm install",
+    "server:start": "cd server && npm start"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^6.6.3",

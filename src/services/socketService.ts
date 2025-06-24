@@ -33,7 +33,18 @@ class SocketService {
   private eventListeners: Map<string, Set<Function>> = new Map();
 
   constructor() {
-    this.serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+    // Environment-aware server URL configuration
+    const isDevelopment = import.meta.env.DEV;
+    
+    if (isDevelopment) {
+      // Development: connect to separate backend server
+      this.serverUrl = 'http://localhost:3001';
+    } else {
+      // Production: same domain, server serves both frontend and WebSocket
+      this.serverUrl = window.location.origin;
+    }
+    
+    console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${isDevelopment ? 'development' : 'production'})`);
   }
 
   // Connection management

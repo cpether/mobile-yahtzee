@@ -3,6 +3,11 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = createServer(app);
@@ -19,6 +24,9 @@ console.log('Using in-memory storage for game rooms (development mode)');
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React build
+app.use(express.static(path.join(__dirname, '../dist')));
 
 // Game room storage
 const rooms = new Map();
@@ -597,6 +605,11 @@ app.get('/rooms/:code', (req, res) => {
   } else {
     res.status(404).json({ error: 'Room not found' });
   }
+});
+
+// Catch-all handler: send back React's index.html file for any non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
