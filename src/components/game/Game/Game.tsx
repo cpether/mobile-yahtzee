@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import type { Player, ScoreCategory } from '../../../types/game';
-import { useGameState } from '../../../contexts/GameContext';
+import { useGameState } from '../../../hooks/useGameState';
 import { GameSetup } from '../GameSetup/GameSetup';
 import { GameBoard } from '../GameBoard/GameBoard';
 import { GameSummary } from '../GameSummary/GameSummary';
@@ -39,7 +39,7 @@ export const Game: React.FC = () => {
     } else {
       setCurrentView('playing');
     }
-  }, [gameState.dice, gameState.players, gameState.currentPlayerIndex, gameState.gamePhase, scoreCategory]);
+  }, [gameState.players, gameState.currentPlayerIndex, gameState.gamePhase, scoreCategory]);
 
   const handleNewGame = useCallback(() => {
     setCurrentView('setup');

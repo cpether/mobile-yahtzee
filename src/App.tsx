@@ -6,7 +6,18 @@ import { OnlineLobby } from './components/online/OnlineLobby/OnlineLobby';
 import { OnlineGameSetup } from './components/online/OnlineGameSetup/OnlineGameSetup';
 import { OnlineGame } from './components/online/OnlineGame/OnlineGame';
 import { socketService } from './services/socketService';
-import type { GameMode, GameRoom } from './types/online';
+import type { 
+  GameMode, 
+  GameRoom, 
+  RoomCreatedData, 
+  RoomJoinedData, 
+  PlayerReadyChangedData, 
+  PlayerJoinedData, 
+  PlayerLeftData, 
+  GameStartedData, 
+  RoomErrorData, 
+  ConnectionState 
+} from './types/online';
 import './App.css';
 
 type AppView = 'mode-select' | 'online-setup' | 'online-lobby' | 'local-game' | 'online-game';
@@ -21,83 +32,94 @@ function App() {
   // Initialize socket connection and event listeners
   useEffect(() => {
     const setupSocketListeners = () => {
-      socketService.on('room-created', (data: any) => {
-        setCurrentRoom(data.room);
-        setCurrentPlayerId(data.playerId);
+      socketService.on('room-created', (data?: unknown) => {
+        console.log('room-created event received:', data);
+        const typedData = data as RoomCreatedData;
+        setCurrentRoom(typedData.room);
+        setCurrentPlayerId(typedData.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('room-joined', (data: any) => {
-        setCurrentRoom(data.room);
-        setCurrentPlayerId(data.playerId);
+      socketService.on('room-joined', (data?: unknown) => {
+        console.log('room-joined event received:', data);
+        const typedData = data as RoomJoinedData;
+        setCurrentRoom(typedData.room);
+        setCurrentPlayerId(typedData.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('player-ready-changed', (data: any) => {
+      socketService.on('player-ready-changed', (data?: unknown) => {
+        const typedData = data as PlayerReadyChangedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           const updatedPlayers = prevRoom.players.map(player => 
-            player.id === data.playerId 
-              ? { ...player, isReady: data.isReady }
+            player.id === typedData.playerId 
+              ? { ...player, isReady: typedData.isReady }
               : player
           );
           
           return {
             ...prevRoom,
             players: updatedPlayers,
-            status: data.roomStatus
+            status: typedData.roomStatus
           };
         });
       });
 
-      socketService.on('player-joined', (data: any) => {
+      socketService.on('player-joined', (data?: unknown) => {
+        const typedData = data as PlayerJoinedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           // Check if player already exists to prevent duplicates
-          const playerExists = prevRoom.players.some(p => p.id === data.player.id);
+          const playerExists = prevRoom.players.some(p => p.id === typedData.player.id);
           if (playerExists) {
             return prevRoom;
           }
           
           return {
             ...prevRoom,
-            players: [...prevRoom.players, data.player]
+            players: [...prevRoom.players, typedData.player]
           };
         });
       });
 
-      socketService.on('player-left', (data: any) => {
+      socketService.on('player-left', (data?: unknown) => {
+        const typedData = data as PlayerLeftData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           return {
             ...prevRoom,
-            players: prevRoom.players.filter(p => p.id !== data.playerId)
+            players: prevRoom.players.filter(p => p.id !== typedData.playerId)
           };
         });
       });
 
-      socketService.on('game-started', (data: any) => {
+      socketService.on('game-started', (data?: unknown) => {
+        const typedData = data as GameStartedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           return {
             ...prevRoom,
-            gameState: data.gameState,
+            gameState: typedData.gameState,
             status: 'playing'
           };
         });
         setCurrentView('online-game');
       });
 
-      socketService.on('room-error', (data: any) => {
-        setError(data.message);
+      socketService.on('room-error', (data?: unknown) => {
+        console.log('room-error event received:', data);
+        const typedData = data as RoomErrorData;
+        setError(typedData.message);
       });
 
-      socketService.on('connection-changed', (connectionState: any) => {
+      socketService.on('connection-changed', (data?: unknown) => {
+        const connectionState = data as ConnectionState;
         if (connectionState.status === 'error') {
           setError('Connection failed. Please check if the server is running.');
         }
@@ -122,7 +144,7 @@ function App() {
       try {
         await socketService.connect();
         setCurrentView('online-setup');
-      } catch (err) {
+      } catch {
         setError('Failed to connect to server. Please make sure the server is running on port 3001.');
       }
     }
