@@ -39,7 +39,7 @@ export const Game: React.FC = () => {
     } else {
       setCurrentView('playing');
     }
-  }, [gameState.dice, gameState.players, gameState.currentPlayerIndex, gameState.gamePhase, scoreCategory]);
+  }, [gameState.players, gameState.currentPlayerIndex, gameState.gamePhase, scoreCategory]);
 
   const handleNewGame = useCallback(() => {
     setCurrentView('setup');

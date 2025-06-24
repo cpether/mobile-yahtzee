@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import type { DiceState } from '../types/game';
 import type {
   GameRoom,
   ConnectionState,
@@ -30,7 +31,7 @@ class SocketService {
   private connectionState: ConnectionState = {
     status: 'disconnected'
   };
-  private eventListeners: Map<string, Set<Function>> = new Map();
+  private eventListeners: Map<string, Set<(data?: unknown) => void>> = new Map();
 
   constructor() {
     // Environment-aware server URL configuration
@@ -103,21 +104,21 @@ class SocketService {
   }
 
   // Event management
-  on(event: string, callback: Function) {
+  on(event: string, callback: (data?: unknown) => void) {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
     this.eventListeners.get(event)!.add(callback);
   }
 
-  off(event: string, callback: Function) {
+  off(event: string, callback: (data?: unknown) => void) {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.delete(callback);
     }
   }
 
-  private emit(event: string, data?: any) {
+  private emit(event: string, data?: unknown) {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.forEach(callback => callback(data));
@@ -296,7 +297,7 @@ class SocketService {
     });
 
     // Game events
-    this.socket.on('dice-rolling-started', (data: any) => {
+    this.socket.on('dice-rolling-started', (data: { dice: DiceState[] }) => {
       if (this.connectionState.room) {
         this.connectionState.room.gameState.dice = data.dice;
       }

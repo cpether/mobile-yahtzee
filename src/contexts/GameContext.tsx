@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import React, { createContext, useReducer, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { GameState, GameAction, Player, ScoreCategory } from '../types/game';
+import type { GameState, GameAction, Player, ScoreCategory, Scorecard } from '../types/game';
 import { 
   createInitialGameState, 
   startGame, 
@@ -18,7 +18,6 @@ import {
   triggerDieHoldHaptic
 } from '../utils/diceUtils';
 import { calculateScore } from '../utils/scoring';
-
 interface GameContextType {
   gameState: GameState;
   dispatch: React.Dispatch<GameAction>;
@@ -30,13 +29,13 @@ interface GameContextType {
   nextTurn: () => void;
   // Selectors
   currentPlayer: Player | null;
-  currentPlayerScorecard: any;
+  currentPlayerScorecard: Scorecard | null;
   availableCategories: ScoreCategory[];
   canRoll: boolean;
   mustScore: boolean;
 }
 
-const GameContext = createContext<GameContextType | null>(null);
+export const GameContext = createContext<GameContextType | null>(null);
 
 // Game state reducer
 const gameReducer = (state: GameState, action: GameAction): GameState => {
@@ -178,11 +177,4 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use game context
-export const useGameState = () => {
-  const context = useContext(GameContext);
-  if (!context) {
-    throw new Error('useGameState must be used within a GameProvider');
-  }
-  return context;
-}; 
+ 
