@@ -152,4 +152,70 @@ export const triggerDieHoldHaptic = (): void => {
     // Single short vibration for hold toggle
     navigator.vibrate(25);
   }
-}; 
+};
+
+/**
+ * Test the randomness of dice rolls using chi-square test
+ * @param sampleSize Number of dice rolls to test
+ * @returns Object containing test results
+ */
+export const testDiceRandomness = (sampleSize: number = 10000): DiceRandomnessTestResult => {
+  // Count occurrences of each value
+  const counts: Record<number, number> = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0
+  };
+  
+  // Generate rolls
+  for (let i = 0; i < sampleSize; i++) {
+    const roll = rollDie();
+    counts[roll] = counts[roll] + 1;
+  }
+  
+  // Calculate statistics
+  const expected = sampleSize / 6;
+  const percentages: Record<number, number> = {};
+  const deviations: Record<number, number> = {};
+  
+  for (let i = 1; i <= 6; i++) {
+    percentages[i] = (counts[i] / sampleSize) * 100;
+    deviations[i] = ((counts[i] - expected) / expected) * 100;
+  }
+  
+  // Calculate chi-square value
+  let chiSquareValue = 0;
+  for (let i = 1; i <= 6; i++) {
+    const diff = counts[i] - expected;
+    chiSquareValue += (diff * diff) / expected;
+  }
+  
+  // Critical value for 5 degrees of freedom at 95% confidence level is 11.07
+  const isProbablyRandom = chiSquareValue <= 11.07;
+  
+  return {
+    sampleSize,
+    counts,
+    percentages,
+    deviations,
+    expected,
+    chiSquareValue,
+    isProbablyRandom
+  };
+};
+
+/**
+ * Dice randomness test result interface
+ */
+export interface DiceRandomnessTestResult {
+  sampleSize: number;
+  counts: Record<number, number>;
+  percentages: Record<number, number>;
+  deviations: Record<number, number>;
+  expected: number;
+  chiSquareValue: number;
+  isProbablyRandom: boolean;
+} 
