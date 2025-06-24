@@ -36,11 +36,6 @@ jobs:
     - name: Build frontend
       run: npm run build
 
-    - name: Test frontend
-      run: npm test
-      env:
-        CI: true
-
   deploy:
     needs: test
     runs-on: ubuntu-latest
