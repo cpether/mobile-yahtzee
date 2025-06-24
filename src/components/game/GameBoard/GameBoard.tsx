@@ -123,12 +123,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             🎲 Roll Dice
           </button>
         )}
-        
-        {!canRoll && (
-          <div className="score-reminder">
-            Choose a category to score your roll
-          </div>
-        )}
       </div>
 
       {/* Quick Scoring */}
