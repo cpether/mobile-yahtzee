@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: Test
 
 on:
   push:
@@ -34,47 +34,4 @@ jobs:
       run: npx tsc --noEmit
 
     - name: Build frontend
-      run: npm run build
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Install Railway CLI
-      run: |
-        curl -fsSL https://railway.app/install.sh | sh
-        echo "$HOME/.railway/bin" >> $GITHUB_PATH
-
-    - name: Deploy to Railway
-      run: railway up --detach
-      env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-    - name: Get deployment URL
-      run: |
-        railway status
-      env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-  notify:
-    needs: deploy
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-    - name: Notify deployment success
-      if: needs.deploy.result == 'success'
-      run: |
-        echo "✅ Deployment successful!"
-        echo "🚀 Your Yahtzee game is now live!"
-        
-    - name: Notify deployment failure
-      if: needs.deploy.result == 'failure'
-      run: |
-        echo "❌ Deployment failed!"
-        echo "Please check the logs for details." 
+      run: npm run build 
