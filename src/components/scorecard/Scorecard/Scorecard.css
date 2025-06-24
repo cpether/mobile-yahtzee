@@ -124,19 +124,21 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .scorecard-row__name {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   color: var(--color-on-surface);
+  display: block;
 }
 
 .scorecard-row__description {
   font-size: var(--font-size-xs);
   color: var(--color-on-surface-variant);
   line-height: 1.2;
+  display: block;
 }
 
 .scorecard-row.compact .scorecard-row__description {

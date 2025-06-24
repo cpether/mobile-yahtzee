@@ -21,6 +21,15 @@ const PLAYER_COLORS = [
   '#ff9800'  // Orange
 ];
 
+const COLOR_NAMES: Record<string, string> = {
+  '#1a73e8': 'Blue',
+  '#34a853': 'Green',
+  '#ea4335': 'Red',
+  '#fbbc04': 'Yellow',
+  '#9c27b0': 'Purple',
+  '#ff9800': 'Orange'
+};
+
 export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
   const [playerCount, setPlayerCount] = useState(2);
   const [playerInputs, setPlayerInputs] = useState<PlayerInput[]>([
@@ -91,6 +100,8 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
                 key={count}
                 className={`player-count-button ${playerCount === count ? 'active' : ''}`}
                 onClick={() => setPlayerCount(count)}
+                aria-label={`${count} players`}
+                aria-selected={playerCount === count}
               >
                 {count}
               </button>
@@ -122,7 +133,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
                 >
                   {PLAYER_COLORS.map(color => (
                     <option key={color} value={color}>
-                      {color}
+                      {COLOR_NAMES[color]}
                     </option>
                   ))}
                 </select>

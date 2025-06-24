@@ -34,8 +34,6 @@
   min-height: 60px;
 }
 
-
-
 .player-header {
   padding: 0;
   font-weight: var(--font-weight-bold);
@@ -251,7 +249,6 @@
 .total-row .category-label {
   background: var(--color-gray-800);
   color: var(--color-white);
-  font-weight: var(--font-weight-bold);
 }
 
 .grand-total-row {
@@ -380,4 +377,32 @@
   }
 }
 
-/* Remove unnecessary light color */ 
+/* Remove unnecessary light color */
+
+.category-label {
+  padding: var(--spacing-3) var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  justify-content: center;
+  background: var(--color-surface);
+}
+
+.category-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-on-surface);
+  display: block;
+}
+
+.category-description {
+  font-size: var(--font-size-xs);
+  color: var(--color-on-surface-variant);
+  display: block;
+  line-height: 1.2;
+}
+
+.total-row .category-label {
+  background: var(--color-gray-800);
+  color: var(--color-white);
+} 
