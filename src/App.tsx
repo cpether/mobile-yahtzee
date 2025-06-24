@@ -32,83 +32,94 @@ function App() {
   // Initialize socket connection and event listeners
   useEffect(() => {
     const setupSocketListeners = () => {
-      socketService.on('room-created', (data: RoomCreatedData) => {
-        setCurrentRoom(data.room);
-        setCurrentPlayerId(data.playerId);
+      socketService.on('room-created', (data?: unknown) => {
+        console.log('room-created event received:', data);
+        const typedData = data as RoomCreatedData;
+        setCurrentRoom(typedData.room);
+        setCurrentPlayerId(typedData.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('room-joined', (data: RoomJoinedData) => {
-        setCurrentRoom(data.room);
-        setCurrentPlayerId(data.playerId);
+      socketService.on('room-joined', (data?: unknown) => {
+        console.log('room-joined event received:', data);
+        const typedData = data as RoomJoinedData;
+        setCurrentRoom(typedData.room);
+        setCurrentPlayerId(typedData.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('player-ready-changed', (data: PlayerReadyChangedData) => {
+      socketService.on('player-ready-changed', (data?: unknown) => {
+        const typedData = data as PlayerReadyChangedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           const updatedPlayers = prevRoom.players.map(player => 
-            player.id === data.playerId 
-              ? { ...player, isReady: data.isReady }
+            player.id === typedData.playerId 
+              ? { ...player, isReady: typedData.isReady }
               : player
           );
           
           return {
             ...prevRoom,
             players: updatedPlayers,
-            status: data.roomStatus
+            status: typedData.roomStatus
           };
         });
       });
 
-      socketService.on('player-joined', (data: PlayerJoinedData) => {
+      socketService.on('player-joined', (data?: unknown) => {
+        const typedData = data as PlayerJoinedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           // Check if player already exists to prevent duplicates
-          const playerExists = prevRoom.players.some(p => p.id === data.player.id);
+          const playerExists = prevRoom.players.some(p => p.id === typedData.player.id);
           if (playerExists) {
             return prevRoom;
           }
           
           return {
             ...prevRoom,
-            players: [...prevRoom.players, data.player]
+            players: [...prevRoom.players, typedData.player]
           };
         });
       });
 
-      socketService.on('player-left', (data: PlayerLeftData) => {
+      socketService.on('player-left', (data?: unknown) => {
+        const typedData = data as PlayerLeftData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
           return {
             ...prevRoom,
-            players: prevRoom.players.filter(p => p.id !== data.playerId)
+            players: prevRoom.players.filter(p => p.id !== typedData.playerId)
           };
         });
       });
 
-      socketService.on('game-started', (data: GameStartedData) => {
+      socketService.on('game-started', (data?: unknown) => {
+        const typedData = data as GameStartedData;
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           return {
             ...prevRoom,
-            gameState: data.gameState,
+            gameState: typedData.gameState,
             status: 'playing'
           };
         });
         setCurrentView('online-game');
       });
 
-      socketService.on('room-error', (data: RoomErrorData) => {
-        setError(data.message);
+      socketService.on('room-error', (data?: unknown) => {
+        console.log('room-error event received:', data);
+        const typedData = data as RoomErrorData;
+        setError(typedData.message);
       });
 
-      socketService.on('connection-changed', (connectionState: ConnectionState) => {
+      socketService.on('connection-changed', (data?: unknown) => {
+        const connectionState = data as ConnectionState;
         if (connectionState.status === 'error') {
           setError('Connection failed. Please check if the server is running.');
         }
