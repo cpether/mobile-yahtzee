@@ -1,7 +1,7 @@
 import React from 'react';
 import type { GameState, ScoreCategory } from '../../../types/game';
 import { Die } from '../../dice/Die/Die';
-import { Scorecard } from '../../scorecard/Scorecard/Scorecard';
+
 import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
 import { calculateScore, canScoreCategory } from '../../../utils/scoring';
 import './GameBoard.css';

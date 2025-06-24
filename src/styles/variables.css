@@ -8,6 +8,10 @@
   --color-secondary-light: #5bb974;
   --color-secondary-dark: #2d8f47;
   
+  --color-success: #34a853;
+  --color-success-light: #e8f5e8;
+  --color-success-dark: #2d8f47;
+  
   --color-accent: #ea4335;
   --color-accent-light: #ed6f5f;
   --color-accent-dark: #c5392a;
@@ -34,6 +38,13 @@
   --color-surface-variant: var(--color-gray-50);
   --color-on-surface: var(--color-gray-900);
   --color-on-surface-variant: var(--color-gray-700);
+  
+  /* Component-specific color mappings */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-background: var(--color-white);
+  --color-background-light: var(--color-gray-50);
+  --color-border: var(--color-gray-300);
   
   /* Dice colors */
   --color-die-face: var(--color-white);
@@ -154,6 +165,15 @@
     --color-surface-variant: var(--color-gray-800);
     --color-on-surface: var(--color-white);
     --color-on-surface-variant: var(--color-gray-300);
+    
+    /* Component-specific color mappings for dark mode */
+    --color-text-primary: var(--color-white);
+    --color-text-secondary: var(--color-gray-300);
+    --color-background: var(--color-gray-900);
+    --color-background-light: var(--color-gray-800);
+    --color-border: var(--color-gray-600);
+    
+    --color-success-light: #1b4332;
     
     --color-die-face: var(--color-white);
     --color-die-border: var(--color-gray-600);

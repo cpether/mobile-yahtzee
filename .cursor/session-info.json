@@ -1,12 +1,12 @@
 {
-  "session_id": "20250623-1142",
-  "branch_name": "session/20250623-1142-multi-player-scorecard-view",
-  "start_time": "2024-06-23T11:42:00Z",
-  "description": "Change scorecard to show all players with their names at the top and scores in columns below",
+  "session_id": "20250623-1234",
+  "branch_name": "session/20250623-1234-online-multiplayer-game",
+  "start_time": "2024-06-23T12:34:00Z",
+  "description": "Add online multiplayer functionality with game codes and real-time play",
   "changes_made": 0,
   "commits_made": 0,
   "previous_session": {
-    "branch": "session/20250623-1126-fix-game-board-css-styling",
+    "branch": "session/20250623-1142-multi-player-scorecard-view",
     "stashed_changes": false
   }
 }

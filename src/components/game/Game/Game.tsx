@@ -4,8 +4,7 @@ import { useGameState } from '../../../contexts/GameContext';
 import { GameSetup } from '../GameSetup/GameSetup';
 import { GameBoard } from '../GameBoard/GameBoard';
 import { GameSummary } from '../GameSummary/GameSummary';
-import { Scorecard } from '../../scorecard/Scorecard/Scorecard';
-import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
+
 
 import './Game.css';
 
@@ -49,9 +48,6 @@ export const Game: React.FC = () => {
   const handleViewScorecards = useCallback(() => {
     // This will show the multi-player scorecard in GameSummary
   }, []);
-
-  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const currentScorecard = currentPlayer?.id ? gameState.scorecards[currentPlayer.id] : null;
 
   // Handle game completion detection
   React.useEffect(() => {

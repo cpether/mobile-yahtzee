@@ -4,7 +4,7 @@ This document serves as the master specification overview for the mobile web-bas
 
 ## Project Overview
 
-A mobile-first web application implementing the classic dice game Yahtzee, designed for multiple players to pass a single device around and take turns. The game features animated dice rolling, comprehensive scorekeeping, and follows official Yahtzee rules.
+A mobile-first web application implementing the classic dice game Yahtzee, supporting both local pass-and-play and online multiplayer modes. Players can create games with unique codes, invite friends to join from their own devices, and play together in real-time. The game features animated dice rolling, comprehensive scorekeeping, and follows official Yahtzee rules.
 
 ## Specification Documents
 
@@ -19,12 +19,16 @@ A mobile-first web application implementing the classic dice game Yahtzee, desig
 | **Player Management** | [specs/player-management.md](specs/player-management.md) | Multi-player support, turn management, and player flow |
 | **Mobile Considerations** | [specs/mobile-considerations.md](specs/mobile-considerations.md) | Touch interactions, responsive design, and mobile-specific features |
 | **Testing Strategy** | [specs/testing-strategy.md](specs/testing-strategy.md) | Testing approach, test cases, and quality assurance |
+| **Online Multiplayer** | [specs/online-multiplayer.md](specs/online-multiplayer.md) | Real-time multiplayer with game codes and synchronized gameplay |
 | **Deployment** | [specs/deployment.md](specs/deployment.md) | Build process, hosting, and deployment strategy |
 
 ## Key Features
 
 - **Mobile-First Design**: Optimized for touch interactions and small screens
-- **Pass-and-Play Multiplayer**: Players take turns using the same device
+- **Dual Multiplayer Modes**: Local pass-and-play OR online real-time multiplayer
+- **Game Code System**: Create and join games with unique 6-character codes
+- **Real-time Synchronization**: All players see dice rolls and scores instantly
+- **Cross-Device Play**: Each player uses their own phone/tablet/computer
 - **Animated Dice Rolling**: Engaging visual feedback for dice rolls
 - **Official Yahtzee Rules**: Complete implementation of standard Yahtzee scoring
 - **Intuitive Scorecard**: Easy-to-use digital scorecard with validation
@@ -33,11 +37,15 @@ A mobile-first web application implementing the classic dice game Yahtzee, desig
 
 ## Technology Stack
 
-- **Frontend**: React with TypeScript
-- **Styling**: CSS-in-JS or styled-components for component styling
+- **Frontend**: React with TypeScript, Socket.io Client for real-time communication
+- **Backend**: Node.js + Express + Socket.io for real-time multiplayer
+- **Database**: Redis for fast session storage and game state management
+- **Styling**: CSS Modules for component styling
 - **Build Tool**: Vite for fast development and building
-- **Testing**: Jest and React Testing Library
-- **Deployment**: Static hosting (Netlify, Vercel, or GitHub Pages)
+- **Testing**: Vitest and React Testing Library
+- **Deployment**: 
+  - Frontend: Static hosting (Netlify, Vercel)
+  - Backend: Railway or Render for Node.js hosting
 
 ## Target Audience
 
