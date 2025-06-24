@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import type { Player, ScoreCategory } from '../../../types/game';
-import { useGameState } from '../../../contexts/GameContext';
+import { useGameState } from '../../../hooks/useGameState';
 import { GameSetup } from '../GameSetup/GameSetup';
 import { GameBoard } from '../GameBoard/GameBoard';
 import { GameSummary } from '../GameSummary/GameSummary';
