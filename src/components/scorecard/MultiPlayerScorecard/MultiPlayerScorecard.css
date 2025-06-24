@@ -12,6 +12,8 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  padding: 0;
+  margin: 0;
 }
 
 /* Header Row */
@@ -20,6 +22,8 @@
   grid-template-columns: 160px repeat(var(--player-count, 3), 1fr);
   background: var(--color-gray-800);
   border-bottom: 1px solid var(--color-gray-700);
+  padding: 0;
+  margin: 0;
 }
 
 .category-label-header {
@@ -32,6 +36,8 @@
   display: flex;
   align-items: center;
   min-height: 60px;
+  width: 160px;
+  box-sizing: border-box;
 }
 
 .player-header {
@@ -107,6 +113,8 @@
   gap: var(--spacing-1);
   justify-content: center;
   background: var(--color-surface);
+  width: 160px;
+  box-sizing: border-box;
 }
 
 .category-name {
