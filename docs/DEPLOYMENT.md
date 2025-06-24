@@ -18,28 +18,18 @@ This guide explains how to set up automatic deployment to Railway when changes a
    - Select "Deploy from GitHub repo"
    - Choose your repository
 
-2. **Configure Services**:
-   Railway will automatically detect both your frontend and backend. You should see:
-   - **Backend Service**: Detects `server/` directory with Node.js
-   - **Frontend Service**: Detects root directory with Vite/React
+2. **Configure Service**:
+   Railway will detect your Node.js application and create a single service that serves both frontend and backend.
 
 ### 2. Environment Variables Setup
 
-#### Backend Service Variables:
+#### Single Service Variables:
 ```bash
 NODE_ENV=production
-PORT=${{ RAILWAY_PUBLIC_PORT }}
-CLIENT_URL=${{ RAILWAY_PUBLIC_DOMAIN }}
+PORT=${{ PORT }}
 ```
 
-#### Frontend Service Variables:
-```bash
-NODE_ENV=production
-VITE_APP_ENVIRONMENT=production
-VITE_API_URL=https://your-backend-service.up.railway.app
-VITE_APP_NAME="Yahtzee Online"
-VITE_APP_VERSION=1.0.0
-```
+**Note**: No additional environment variables needed! The simplified setup serves both frontend and backend from one service.
 
 ### 3. GitHub Secrets Setup
 
@@ -68,23 +58,19 @@ The deployment workflow (`.github/workflows/deploy.yml`) will:
 
 ### 5. Railway Service Configuration
 
-#### Backend Service Settings:
-```toml
-# Railway will use server/package.json
-Root Directory: /server
-Build Command: npm install
-Start Command: npm start
-Port: $PORT (automatically assigned)
-```
-
-#### Frontend Service Settings:
+#### Single Service Settings:
 ```toml
 # Railway will use root package.json
 Root Directory: /
-Build Command: npm install && npm run build
-Start Command: npm run preview
+Build Command: npm install
+Start Command: npm run start:production
 Port: $PORT (automatically assigned)
 ```
+
+**How it works:**
+1. Railway builds the React frontend (`npm run build`)
+2. Installs server dependencies (`npm run server:install`)
+3. Starts Node.js server which serves both static files and WebSocket API
 
 ### 6. Custom Domain Setup (Optional)
 

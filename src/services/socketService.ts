@@ -45,6 +45,12 @@ class SocketService {
     }
     
     console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${isDevelopment ? 'development' : 'production'})`);
+    console.log(`Window location: ${window.location.href}`);
+    console.log(`Environment variables:`, {
+      DEV: import.meta.env.DEV,
+      MODE: import.meta.env.MODE,
+      PROD: import.meta.env.PROD
+    });
   }
 
   // Connection management
@@ -59,6 +65,13 @@ class SocketService {
       this.socket = io(this.serverUrl, {
         transports: ['websocket', 'polling'],
         timeout: 10000,
+        forceNew: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+        // Production-specific settings
+        upgrade: true,
+        rememberUpgrade: true
       });
 
       this.socket.on('connect', () => {
@@ -152,18 +165,26 @@ class SocketService {
   }
 
   async joinRoom(code: string, playerName: string): Promise<void> {
+    console.log(`🔄 Attempting to join room ${code} as ${playerName}`);
+    console.log(`Socket connected: ${this.socket?.connected}`);
+    console.log(`Socket ID: ${this.socket?.id}`);
+    
     if (!this.socket?.connected) {
+      console.error('❌ Socket not connected when trying to join room');
       throw new Error('Not connected to server');
     }
 
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
+        console.error('⏰ Room join timed out after 10 seconds');
         reject(new Error('Room join timed out'));
       }, 10000);
 
+      console.log(`📤 Emitting join-room event for ${code}`);
       this.socket!.emit('join-room', { code, playerName } as JoinRoomData);
 
       const onRoomJoined = (data: RoomJoinedData) => {
+        console.log('✅ Room joined successfully:', data);
         clearTimeout(timeout);
         this.connectionState.room = data.room;
         this.connectionState.playerId = data.playerId;
@@ -172,12 +193,15 @@ class SocketService {
       };
 
       const onRoomError = (data: RoomErrorData) => {
+        console.error('❌ Room join error:', data);
         clearTimeout(timeout);
         reject(new Error(data.message));
       };
 
       this.socket!.once('room-joined', onRoomJoined);
       this.socket!.once('room-error', onRoomError);
+      
+      console.log('🎧 Set up room-joined and room-error listeners');
     });
   }
 
