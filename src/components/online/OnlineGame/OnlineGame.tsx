@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import type { GameRoom } from '../../../types/online';
-import type { ScoreCategory } from '../../../types/game';
+import type { GameRoom, DiceRolledData, TurnEndedData } from '../../../types/online';
+import type { ScoreCategory, DiceState } from '../../../types/game';
 import { socketService } from '../../../services/socketService';
 import { GameBoard } from '../../game/GameBoard/GameBoard';
 import { GameSummary } from '../../game/GameSummary/GameSummary';
@@ -27,42 +27,49 @@ export const OnlineGame: React.FC<OnlineGameProps> = ({
 
   // Listen for game state updates from server
   useEffect(() => {
-    const handleDiceRollingStarted = (data: any) => {
+    const handleDiceRollingStarted = (data?: unknown) => {
+      const typedData = data as { dice: DiceState[] };
       setGameState(prevState => ({
         ...prevState,
-        dice: data.dice
+        dice: typedData.dice
       }));
     };
 
-    const handleDiceRolled = (data: any) => {
+    const handleDiceRolled = (data?: unknown) => {
+      const typedData = data as DiceRolledData;
       setGameState(prevState => ({
         ...prevState,
-        dice: data.dice,
-        rollsRemaining: data.rollsRemaining
+        dice: typedData.dice,
+        rollsRemaining: typedData.rollsRemaining
       }));
       
       // Show scoring if no rolls remaining
-      if (data.rollsRemaining === 0) {
+      if (typedData.rollsRemaining === 0) {
         setShowScoring(true);
       }
     };
 
-    const handleDieHeld = (data: any) => {
+    const handleDieHeld = (data?: unknown) => {
+      const typedData = data as { dieIndex: number; isHeld: boolean };
       setGameState(prevState => ({
         ...prevState,
         dice: prevState.dice.map((die, index) => 
-          index === data.dieIndex ? { ...die, isHeld: data.isHeld } : die
+          index === typedData.dieIndex ? { ...die, isHeld: typedData.isHeld } : die
         )
       }));
     };
 
-    const handleTurnEnded = (data: any) => {
-      setGameState(data.gameState);
+    const handleTurnEnded = (data?: unknown) => {
+      const typedData = data as TurnEndedData;
+      setGameState(typedData.gameState);
       setShowScoring(false);
     };
 
-    const handleGameEnded = (data: any) => {
-      setGameState(data.gameState);
+    const handleGameEnded = () => {
+      setGameState(prevState => ({
+        ...prevState,
+        gamePhase: 'finished'
+      }));
     };
 
     socketService.on('dice-rolling-started', handleDiceRollingStarted);

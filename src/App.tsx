@@ -6,7 +6,18 @@ import { OnlineLobby } from './components/online/OnlineLobby/OnlineLobby';
 import { OnlineGameSetup } from './components/online/OnlineGameSetup/OnlineGameSetup';
 import { OnlineGame } from './components/online/OnlineGame/OnlineGame';
 import { socketService } from './services/socketService';
-import type { GameMode, GameRoom } from './types/online';
+import type { 
+  GameMode, 
+  GameRoom, 
+  RoomCreatedData, 
+  RoomJoinedData, 
+  PlayerReadyChangedData, 
+  PlayerJoinedData, 
+  PlayerLeftData, 
+  GameStartedData, 
+  RoomErrorData, 
+  ConnectionState 
+} from './types/online';
 import './App.css';
 
 type AppView = 'mode-select' | 'online-setup' | 'online-lobby' | 'local-game' | 'online-game';
@@ -21,21 +32,21 @@ function App() {
   // Initialize socket connection and event listeners
   useEffect(() => {
     const setupSocketListeners = () => {
-      socketService.on('room-created', (data: any) => {
+      socketService.on('room-created', (data: RoomCreatedData) => {
         setCurrentRoom(data.room);
         setCurrentPlayerId(data.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('room-joined', (data: any) => {
+      socketService.on('room-joined', (data: RoomJoinedData) => {
         setCurrentRoom(data.room);
         setCurrentPlayerId(data.playerId);
         setCurrentView('online-lobby');
         setError(null);
       });
 
-      socketService.on('player-ready-changed', (data: any) => {
+      socketService.on('player-ready-changed', (data: PlayerReadyChangedData) => {
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
@@ -53,7 +64,7 @@ function App() {
         });
       });
 
-      socketService.on('player-joined', (data: any) => {
+      socketService.on('player-joined', (data: PlayerJoinedData) => {
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
@@ -70,7 +81,7 @@ function App() {
         });
       });
 
-      socketService.on('player-left', (data: any) => {
+      socketService.on('player-left', (data: PlayerLeftData) => {
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           
@@ -81,7 +92,7 @@ function App() {
         });
       });
 
-      socketService.on('game-started', (data: any) => {
+      socketService.on('game-started', (data: GameStartedData) => {
         setCurrentRoom(prevRoom => {
           if (!prevRoom) return prevRoom;
           return {
@@ -93,11 +104,11 @@ function App() {
         setCurrentView('online-game');
       });
 
-      socketService.on('room-error', (data: any) => {
+      socketService.on('room-error', (data: RoomErrorData) => {
         setError(data.message);
       });
 
-      socketService.on('connection-changed', (connectionState: any) => {
+      socketService.on('connection-changed', (connectionState: ConnectionState) => {
         if (connectionState.status === 'error') {
           setError('Connection failed. Please check if the server is running.');
         }
@@ -122,7 +133,7 @@ function App() {
       try {
         await socketService.connect();
         setCurrentView('online-setup');
-      } catch (err) {
+      } catch {
         setError('Failed to connect to server. Please make sure the server is running on port 3001.');
       }
     }

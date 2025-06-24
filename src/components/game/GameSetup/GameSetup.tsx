@@ -31,15 +31,17 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
 
   // Update player inputs when count changes
   React.useEffect(() => {
-    const newInputs = Array.from({ length: playerCount }, (_, index) => {
-      const existing = playerInputs[index];
-      return existing || {
-        name: '',
-        color: PLAYER_COLORS[index % PLAYER_COLORS.length]
-      };
+    setPlayerInputs(prevInputs => {
+      const newInputs = Array.from({ length: playerCount }, (_, index) => {
+        const existing = prevInputs[index];
+        return existing || {
+          name: '',
+          color: PLAYER_COLORS[index % PLAYER_COLORS.length]
+        };
+      });
+      return newInputs;
     });
-    setPlayerInputs(newInputs);
-  }, [playerCount]); // Remove playerInputs from dependencies to prevent infinite loop
+  }, [playerCount]);
 
   const handlePlayerNameChange = (index: number, name: string) => {
     const newInputs = [...playerInputs];
