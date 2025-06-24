@@ -219,7 +219,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+      <div className="App">
       {error && (
         <div className="error-banner">
           <span>{error}</span>
@@ -227,7 +227,7 @@ function App() {
         </div>
       )}
       {renderCurrentView()}
-    </div>
+      </div>
   );
 }
 

@@ -33,7 +33,14 @@ class SocketService {
   private eventListeners: Map<string, Set<Function>> = new Map();
 
   constructor() {
-    this.serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+    // Environment-aware server URL configuration
+    const isDevelopment = import.meta.env.DEV;
+    const productionUrl = import.meta.env.VITE_API_URL;
+    const developmentUrl = 'http://localhost:3001';
+    
+    this.serverUrl = isDevelopment ? developmentUrl : (productionUrl || developmentUrl);
+    
+    console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${import.meta.env.VITE_APP_ENVIRONMENT || 'development'})`);
   }
 
   // Connection management
