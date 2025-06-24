@@ -11,18 +11,32 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = createServer(app);
+// Configure CORS for Socket.io based on environment
+const isProduction = process.env.NODE_ENV === 'production';
+const corsOrigin = isProduction 
+  ? true  // Allow same-origin requests in production
+  : (process.env.CLIENT_URL || "http://localhost:5173"); // Development setup
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    methods: ["GET", "POST"]
-  }
+    origin: corsOrigin,
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  // Add additional production-specific settings
+  allowEIO3: true,
+  transports: ['websocket', 'polling']
 });
 
 // For development: using in-memory storage instead of Redis
 // In production, you'd want to use Redis for persistence and scaling
 console.log('Using in-memory storage for game rooms (development mode)');
 
-app.use(cors());
+// Configure Express CORS to match Socket.io
+app.use(cors({
+  origin: corsOrigin,
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static files from the React build

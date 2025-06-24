@@ -43,8 +43,6 @@ class SocketService {
       // Production: same domain, server serves both frontend and WebSocket
       this.serverUrl = window.location.origin;
     }
-    
-    console.log(`SocketService connecting to: ${this.serverUrl} (environment: ${isDevelopment ? 'development' : 'production'})`);
   }
 
   // Connection management
@@ -59,6 +57,13 @@ class SocketService {
       this.socket = io(this.serverUrl, {
         transports: ['websocket', 'polling'],
         timeout: 10000,
+        forceNew: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+        // Production-specific settings
+        upgrade: true,
+        rememberUpgrade: true
       });
 
       this.socket.on('connect', () => {
