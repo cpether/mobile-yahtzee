@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GameProvider } from './contexts/GameContext';
+import { GameProvider } from './contexts/GameContextProvider';
 import { Game } from './components/game/Game/Game';
 import { GameModeSelector } from './components/online/GameModeSelector/GameModeSelector';
 import { OnlineLobby } from './components/online/OnlineLobby/OnlineLobby';
