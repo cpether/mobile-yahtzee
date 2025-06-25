@@ -1,6 +1,6 @@
 import React, { useReducer, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
-import type { GameState, GameAction, Player, ScoreCategory, Scorecard } from '../types/game';
+import type { GameState, GameAction, Player, ScoreCategory } from '../types/game';
 import { 
   createInitialGameState, 
   startGame, 
