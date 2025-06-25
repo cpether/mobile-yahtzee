@@ -1,6 +1,7 @@
 import React from 'react';
 import type { GameState, ScoreCategory } from '../../../types/game';
 import { Die } from '../../dice/Die/Die';
+import { areDiceRolling } from '../../../utils/diceUtils';
 
 import { MultiPlayerScorecard } from '../../scorecard/MultiPlayerScorecard/MultiPlayerScorecard';
 import { calculateScore, canScoreCategory } from '../../../utils/scoring';
@@ -30,6 +31,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   const canRoll = gameState.rollsRemaining > 0;
   const mustScore = gameState.rollsRemaining === 0;
+  const isDiceRolling = gameState.dice.some(die => die.isRolling);
 
   const getAvailableCategories = (): ScoreCategory[] => {
     const allCategories: ScoreCategory[] = [
@@ -119,6 +121,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           <button
             className="btn btn-primary btn-large roll-button"
             onClick={onRollDice}
+            disabled={isDiceRolling}
           >
             🎲 Roll Dice
           </button>

@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useCallback } from 'react';
+import React, { createContext, useReducer, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { GameState, GameAction, Player, ScoreCategory, Scorecard } from '../types/game';
 import { 
@@ -16,7 +16,8 @@ import {
   resetDiceHolds, 
   triggerDiceRollHaptic,
   triggerDieHoldHaptic,
-  setDiceRolling
+  setDiceRolling,
+  areDiceRolling
 } from '../utils/diceUtils';
 import { calculateScore } from '../utils/scoring';
 interface GameContextType {
@@ -51,7 +52,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       return {
         ...state,
         dice: setDiceRolling(state.dice, true),
-        rollsRemaining: state.rollsRemaining - 1
+        rollsRemaining: Math.max(0, state.rollsRemaining - 1)
       };
     }
     
@@ -120,6 +121,8 @@ interface GameProviderProps {
 
 export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const [gameState, dispatch] = useReducer(gameReducer, createInitialGameState());
+  // Add a ref to track if dice are currently rolling
+  const isRollingRef = useRef(false);
   
   // Convenience methods
   const startNewGame = useCallback((players: Player[]) => {
@@ -127,7 +130,11 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   }, []);
   
   const rollDice = useCallback(() => {
-    if (gameState.rollsRemaining > 0) {
+    // Prevent rolling if dice are already rolling or no rolls remaining
+    if (gameState.rollsRemaining > 0 && !isRollingRef.current) {
+      // Set rolling flag to prevent multiple clicks
+      isRollingRef.current = true;
+      
       triggerDiceRollHaptic();
       
       // First, set dice to rolling state without changing values
@@ -147,6 +154,8 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
         // Clear rolling state shortly after
         setTimeout(() => {
           dispatch({ type: 'CLEAR_DICE_ROLLING' });
+          // Reset the rolling flag only after animation is complete
+          isRollingRef.current = false;
         }, 100); // Short delay after values update
       }, animationDuration * 0.8); // Update values at 80% through the animation
     }
@@ -172,7 +181,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
   const currentPlayer = getCurrentPlayer(gameState);
   const currentPlayerScorecard = getCurrentPlayerScorecard(gameState);
   const availableCategories = getAvailableCategories(gameState);
-  const canRoll = gameState.rollsRemaining > 0 && gameState.gamePhase === 'playing';
+  const canRoll = gameState.rollsRemaining > 0 && gameState.gamePhase === 'playing' && !isRollingRef.current;
   const mustScore = gameState.rollsRemaining === 0 && gameState.gamePhase === 'playing';
   
   const contextValue: GameContextType = {
